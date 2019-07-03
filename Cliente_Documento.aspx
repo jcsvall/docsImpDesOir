@@ -1,7 +1,11 @@
 <%@ Page Language="C#" MasterPageFile="~/Sitc_Sv.master" AutoEventWireup="true" CodeFile="Cliente_Documento.aspx.cs"
     Inherits="Cliente_Documento" Title="OIRSA - SITC" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="SampleContent" runat="Server">
-    
+
+<div id="cargandoContenido">
+    <em>Cargando contenido...</em>
+</div>
+<div id="contenidoPagina" style="display:none">
     <form>
                         
         <div class="form-group row">
@@ -118,7 +122,7 @@
                 </div>
             </div>
         </div>
-    
+</div>    
     
     <script src="../JS/fomi/js/jquery-1.9.0.min.js" type="text/javascript"></script>
     <script src="../JS/fomi/js/popper.min.js" type="text/javascript"></script>

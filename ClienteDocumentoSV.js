@@ -5,11 +5,12 @@ var puestoBuscando = "";
 var rangoPaginas = 5;
 var totalRegistros = 0;
 var totalPaginas = 0;
-$(document).ready(function () {
+$(document).ready(function () {    
     llenarDropDownPuestos();
     getTotalesRegistro("", page, "[Puesto]");
     getData("", page, "[Puesto]");
     prepararBotones();
+    ocultarMientrasPageCarga();
 });
 
 function getData(valorBusqueda, page, puesto) {
@@ -344,4 +345,9 @@ function mensajeErrorDialog(mensajeDeError) {
               'onok': function () { }
           }).show().setHeader('<em> Ocurrio un error </em> ');
     }
+}
+
+function ocultarMientrasPageCarga() {
+    $("#cargandoContenido").hide();
+    $("#contenidoPagina").show();
 }

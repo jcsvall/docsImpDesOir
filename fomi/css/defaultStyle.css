@@ -1,4 +1,4 @@
-﻿body { font-size: 75%; }
+﻿body { font-size: 75%; font-family: Tahoma, Arial, sans-serif;}
 #master_menu {  -webkit-box-sizing: content-box;
                 -moz-box-sizing: content-box;
                 box-sizing: content-box;
@@ -7,3 +7,5 @@
                  -moz-box-sizing: content-box;
                  box-sizing: content-box;
                 } 
+.accordionLink {font-weight: normal;}
+.border-style {border-color:black;border-style: dashed;}
