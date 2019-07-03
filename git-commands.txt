@@ -1,0 +1,35 @@
+##Configuracion de usuario##
+git config --global -l
+git config --global user.name "Juan Serrano"
+git config --global user.email "jcsvall@hotmail.com"
+
+##comandos##
+[git init] ->inicio de repositorio ubicado en carpeta
+[git status] ->para ver si hay cambios en el repositorio o si ya se agrego algo al stage.
+[git add .]->para agregar todo al stage
+[git add -A]->para agregar todo al stage
+[git add --all]->para agregar todo al stage
+[git add nombre_archivo]->para agregar el archivo al stage
+[git add directorionombre/]->todo lo que contentga el directorio
+[git add directorionombre/*.css]->todo lo que contentga el directorio con extencion css
+[git commit -m "mensaje"]->para hacer comit de todo el stage.
+[git diff]->para ver las diferencias de los archivos que han sido modificados
+[git checkout .]-> para deshacer todos los cambios realizados
+[git log]-> para ver el historia de commits.
+[git reset directorio/*.css]-> remover del stage todo lo que contenga el directorio con exgtencion css
+
+[git config --global alias.l "log"]->Agregar alias a comandos
+[git commit --amend -m "modificacion del mensaje"]->cambiar el mensaje del commit al equivocarse de nombre de mensaje
+[git mv nombreOriginal nuevoNombre]->Cambiar el nombre de un archivo para gestionarlo con git
+[git rm nombreArchivo]->eliminar archivo para tener historico que fue eliminado
+[git reset --soft commitid]->un paso atras, al indicar soft[solo se regresa a ese lugar pero no se recuperan los archivos] solo indica ir a ese commit no hace ninguna modificacion
+[git reset --hard commitid]->un paso atras recuperando archivos.
+[git reset --mixed commitid] investigar mas
+[git reflog]->para ver todo el historico por si se ha hechor reset y ver todos los commits y moverse en el tiempo
+
+
+git remote add origin https://github.com/jcsvall/docsImpDesOir.git
+git pull
+git push -u origin master
+
+vido7
