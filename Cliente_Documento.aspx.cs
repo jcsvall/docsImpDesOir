@@ -38,7 +38,7 @@ public partial class Cliente_Documento : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-        //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+       
         if (Session["IDUsuario"] == null)
         {
             Response.Redirect("Login.aspx");
@@ -79,25 +79,20 @@ public partial class Cliente_Documento : System.Web.UI.Page
         }
 
         List<Client> lista = new List<Client>();
-        // String ConnectionString = "Server=sededevsql.oirsa.org;database=Sitc-Web;User ID=jserrano;Password=6M5&aVB1%g;MultipleActiveResultSets=True;Max Pool Size=500";
-        // SqlConnection Conn = new SqlConnection(ConnectionString);
-        // Conn.Open();
+        
         SqlConnection Conn = fn.ConnectionSql();
 
         String sQuery = "select cli.Puesto,cli.Cliente,Nombre,dui,nit,pasaporte,cli.idPais from tblCliente cli left join dbo.tblClienteDocumento clidoc ";
         sQuery = sQuery + "on cli.Puesto = clidoc.puesto and clidoc.cliente = cli.cliente and clidoc.idPais=cli.idPais ";
         sQuery = sQuery + "where cli.idPais='" + IdPais + "'" + LikeNombreOrCliente + LikePuesto;
         sQuery = sQuery + "ORDER BY cli.Nombre OFFSET " + Start + " ROWS FETCH NEXT " + Limit + " ROWS ONLY";
-
-        //String sQuery = "select top 100 * from tblCliente where idPais='SV'";
+        
         SqlCommand cmSQL = new SqlCommand(sQuery, Conn);
 
         SqlDataReader reader = cmSQL.ExecuteReader();
         while (reader.Read())
         {
-            Client c1 = new Client();
-            //int iOrderID = reader.GetOrdinal("OrderID");
-            //c1.Cliente = reader.GetInt32(iOrderID);
+            Client c1 = new Client();            
             c1.Puesto = reader["Puesto"].ToString();
             c1.Cliente = reader["Cliente"].ToString();
             c1.Nombre = reader["Nombre"].ToString();
@@ -105,8 +100,7 @@ public partial class Cliente_Documento : System.Web.UI.Page
             c1.Nit = reader["nit"].ToString();
             c1.Pasaporte = reader["pasaporte"].ToString();
             c1.IdPais = reader["idPais"].ToString();
-            lista.Add(c1);
-            //Console.WriteLine(String.Format("{0}", reader[0]));
+            lista.Add(c1);            
         }
         Conn.Close();
         return lista;
@@ -126,10 +120,9 @@ public partial class Cliente_Documento : System.Web.UI.Page
         Funciones fn = new Funciones();
         String IdClienteDocumento = "";
         String queryBusqueda = "select id from tblClienteDocumento where puesto='" + Puesto + "' and cliente='" + Cliente + "' and idPais='" + IdPais + "'";
-        //  String ConnectionString = "Server=sededevsql.oirsa.org;database=Sitc-Web;User ID=jserrano;Password=6M5&aVB1%g;MultipleActiveResultSets=True;Max Pool Size=500";
-        //SqlConnection Conn = new SqlConnection(ConnectionString);
+       
         SqlConnection Conn = fn.ConnectionSql();
-        //Conn.Open();
+       
         SqlCommand cmSQL = new SqlCommand(queryBusqueda, Conn);
         SqlDataReader reader = cmSQL.ExecuteReader();
         while (reader.Read())
@@ -185,7 +178,7 @@ public partial class Cliente_Documento : System.Web.UI.Page
         pagina.TotalRegistros = 0;
         busqueda = busqueda.ToUpper().Trim();
         int Limit = 10;
-        //int Start = (currentpage - 1) * Limit;
+        
         String IdPais = "SV";
 
         String LikeNombreOrCliente = " ";
@@ -201,16 +194,14 @@ public partial class Cliente_Documento : System.Web.UI.Page
         }
 
         List<Client> lista = new List<Client>();
-        //String ConnectionString = "Server=sededevsql.oirsa.org;database=Sitc-Web;User ID=jserrano;Password=6M5&aVB1%g;MultipleActiveResultSets=True;Max Pool Size=500";
+       
         SqlConnection Conn = fn.ConnectionSql();
-       // Conn.Open();
+       
 
         String sQuery = "select count(cli.Puesto) totalRegistros from tblCliente cli left join dbo.tblClienteDocumento clidoc ";
         sQuery = sQuery + "on cli.Puesto = clidoc.puesto and clidoc.cliente = cli.cliente and clidoc.idPais=cli.idPais ";
         sQuery = sQuery + "where cli.idPais='" + IdPais + "'" + LikeNombreOrCliente + LikePuesto;
-        //sQuery = sQuery + "ORDER BY cli.Nombre OFFSET " + Start + " ROWS FETCH NEXT " + Limit + " ROWS ONLY";
-
-        //String sQuery = "select top 100 * from tblCliente where idPais='SV'";
+        
         SqlCommand cmSQL = new SqlCommand(sQuery, Conn);
 
         SqlDataReader reader = cmSQL.ExecuteReader();
