@@ -1,0 +1,9 @@
+﻿body { font-size: 75%; }
+#master_menu {  -webkit-box-sizing: content-box;
+                -moz-box-sizing: content-box;
+                box-sizing: content-box;
+             }
+.sidebarheader { -webkit-box-sizing: content-box;
+                 -moz-box-sizing: content-box;
+                 box-sizing: content-box;
+                } 
