@@ -44,7 +44,7 @@ function getData(valorBusqueda, page, puesto) {
                     objeto.Pasaporte = itemData.Pasaporte;
                     objeto.IdPais = itemData.IdPais;
                     cadena += "<tr><td>" + itemData.Puesto + "</td><td>" + itemData.Cliente + "</td><td>" + itemData.Nombre + "</td><td>" + itemData.Dui + "</td><td>" + itemData.Nit + "</td><td>" + itemData.Pasaporte + "</td>";
-                    cadena += "<td> <button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target=\"#exampleModal\" onClick='llenarModal(" + JSON.stringify(objeto) + ")'>Editar</button> </td></tr>";
+                    cadena += "<td><button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target=\"#exampleModal\" onClick='llenarModal(" + JSON.stringify(objeto) + ")'><span class='oi oi-pencil' style='font-size:65%' title='Editar'></span></button> </td></tr>";
                 });                
                 $("#tbody").html(cadena);
                 pagineo();

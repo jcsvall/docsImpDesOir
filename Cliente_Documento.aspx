@@ -18,7 +18,7 @@
             <div class="col-sm-7">
                 <input type="text" class="form-control form-control-sm" id="busquedaValue" placeholder="Busqueda por nombre o c&oacute;digo de cliente" />
             </div>
-             <button type="button" class="btn btn-primary btn-sm" id="buscar">Buscar</button>
+             <button type="button" class="btn btn-primary btn-sm" id="buscar"><span class="oi oi-magnifying-glass" title="Buscar"></span> Buscar</button>
             
             
         </div>        
@@ -89,8 +89,8 @@
                         
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary btn-sm" id="guardar">Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><span class="oi oi-x"></span> Cerrar</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="guardar"><span class="oi oi-hard-drive"></span> Guardar</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
                             <div class="col-sm-5">
                                 <input type="number" class="form-control form-control-sm" id="paginaValue" />
                             </div>                            
-                            <button type="button" class="btn btn-primary btn-sm" id="ir">Ir</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="ir"><span class="oi oi-reload" title="Actualizar"></span></button>
                             
                         </div>
                     </div>
@@ -124,7 +124,7 @@
         </div>
 </div>    
     
-    <script src="../JS/fomi/js/jquery-1.9.0.min.js" type="text/javascript"></script>
+    <script src="../JS/fomi/js/jquery-1.9.0.min.js" type="text/javascript"></script>    
     <script src="../JS/fomi/js/popper.min.js" type="text/javascript"></script>
     <script src="../JS/fomi/js/bootstrap.min.js" type="text/javascript"></script>  
     <link rel="stylesheet" href="../JS/fomi/css/bootstrap.min.css" />
@@ -132,7 +132,8 @@
     <link rel="stylesheet" href="../JS/fomi/css/alertify.min.css" />
     <link rel="stylesheet" href="../JS/fomi/css/default.min.css" />
     <script src="../JS/fomi/js/jquery.inputmask.js" type="text/javascript"></script>
-    <script src="../JS/fomi/js/jquery.blockUI.js" type="text/javascript"></script>
+    <script src="../JS/fomi/js/jquery.blockUI.js" type="text/javascript"></script> 
+    <link href="../JS/fomi/css/icon-iconic/css/open-iconic-bootstrap.css" rel="stylesheet">   
     <script src="../JS/Core/ClienteDocumentoSV.js" type="text/javascript"></script>
     <link rel="stylesheet" href="../JS/fomi/css/defaultStyle.css" />
     
