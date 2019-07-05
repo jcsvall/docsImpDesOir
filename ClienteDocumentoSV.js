@@ -341,7 +341,7 @@ function mensajeErrorDialog(mensajeDeError) {
         alertify.alert()
           .setting({
               'label': 'Aceptar',
-              'message': mensajeError,
+              'message': mensajeDeError,
               'onok': function () { }
           }).show().setHeader('<em> Ocurrio un error </em> ');
     }
