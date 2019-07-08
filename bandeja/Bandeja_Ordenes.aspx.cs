@@ -121,11 +121,20 @@ public partial class Bandeja_Ordenes : System.Web.UI.Page
         String where = "";
         if (!busqueda.Equals(""))
         {
-            where = " where (upper(NoOrdenMag) like '%" + busqueda + "%' or upper(Cliente) like '%" + busqueda + "%') ";
+            List<String> EsFechaValida = FechaValida(busqueda);
+            if (EsFechaValida[0].Equals("true")) {
+                String separador = EsFechaValida[1];
+                where = " where format(FechaOrden,'dd"+ separador + "MM"+ separador + "yyyy') = '"+busqueda+"' ";
+            }
+            else { 
+                where = " where (upper(NoOrdenMag) like '%" + busqueda + "%' or upper(Cliente) like '%" + busqueda + "%' ";
+                where += " or upper(Tratamiento) like '%" + busqueda + "%' ";
+                where += " or upper(Placa) like '%" + busqueda + "%' or upper(Vapor) like '%" + busqueda + "%') ";
+            }
         }
         if (tipo.Equals("consulta"))
         {
-            sQuery = "SELECT FechaOrden,NoOrdenMag,OperacionMAG,Tratamiento,Puesto,Cliente,InspectorMAG,Placa,Vapor,'producto nombre' Producto  FROM tblOrdenMAG ";
+            sQuery = "SELECT format(FechaOrden,'dd-MM-yyyy hh:mm:ss tt') FechaOrden,NoOrdenMag,OperacionMAG,Tratamiento,Puesto,Cliente,InspectorMAG,Placa,Vapor,Naturaleza Producto  FROM tblOrdenMAG ";
             sQuery += where;
             sQuery += "ORDER BY NoOrdenMag OFFSET " + Start + " ROWS FETCH NEXT " + Limit + " ROWS ONLY";
         }
@@ -136,7 +145,35 @@ public partial class Bandeja_Ordenes : System.Web.UI.Page
         
         return sQuery;
     }
-   
+
+    public static List<String> FechaValida(string inputDate)
+    {
+        List<String> response = new List<String>();
+        
+        try
+        {
+            DateTime dateValue;
+            dateValue = DateTime.ParseExact(inputDate, "dd-MM-yyyy", null);
+            response.Add("true");
+            response.Add("-");
+        }
+        catch
+        {
+            try
+            {
+                DateTime dateValue;
+                dateValue = DateTime.ParseExact(inputDate, "dd/MM/yyyy", null);
+                response.Add("true");
+                response.Add("/");
+            }
+            catch
+            {
+                response.Add("false");
+            }
+        }
+        return response;
+    }
+
     [WebMethod()]
     public static Pagina GetPaginas(string busqueda, int currentpage)
     {

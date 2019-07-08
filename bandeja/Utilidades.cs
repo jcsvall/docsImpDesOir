@@ -70,4 +70,36 @@ public class Utilidades
         return objProvider;
     }
 
+    public String ObtenerValorVariable(String Variable) {
+       
+            if (Variable == null) {
+                return "variableNoExiste";
+            }
+            Variable = Variable.Replace(" ", "+");
+            String variableValue = DecryptFromBase64String(Variable, "BandejaOrden");
+        
+        if (variableValue.StartsWith("Error")) {
+            return "variableAlterada";
+        }
+            return variableValue;
+    }
+
+    public String Acciones(string Puesto, string Orden) {
+        if (Puesto.Equals("variableNoExiste") && Orden.Equals("variableNoExiste"))
+        {
+            return "ProcesoNormal";
+        }
+        if (Puesto.Equals("variableAlterada") 
+          || Orden.Equals("variableAlterada")
+         || Puesto.Equals("variableNoExiste")
+          || Orden.Equals("variableNoExiste")) {
+            return "HacerRedirect";
+        }
+        
+        return "ProcesoBandeja";
+    }
+}
+
+public class Pojo {
+
 }

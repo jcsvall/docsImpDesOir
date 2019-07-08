@@ -10,8 +10,8 @@
                         
         <div class="form-group row">
             
-            <div class="col-sm-7">
-                <input type="text" class="form-control form-control-sm" id="busquedaValue" placeholder="Busqueda por nombre o c&oacute;digo de cliente" />
+            <div class="col-sm-10">
+                <input type="text" class="form-control form-control-sm" id="busquedaValue" placeholder="Busqueda por No. Orden, Tratamiento, Placa, Cliente, Fecha dd-MM-yyyy o dd/MM/yyyy" />
             </div>
              <button type="button" class="btn btn-primary btn-sm" id="buscar"><span class="oi oi-magnifying-glass" title="Buscar"></span> Buscar</button>
             
