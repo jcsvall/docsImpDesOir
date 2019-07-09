@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -98,8 +100,38 @@ public class Utilidades
         
         return "ProcesoBandeja";
     }
+
+    public List<Dictionary<string, object>> GetDataTblOrdenMAGDet(String Puesto, String NoOrden)
+    {
+        Funciones fn = new Funciones();
+        DataTable dt = new DataTable();
+        List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+        SqlConnection Conn = fn.ConnectionSql();
+        String Select = "SELECT Cantidad,QuimicoOirsaDescripcion,DosisOirsaDescripcion,Tiempo,UnidadTiempo,Origen,Destino,Procedencia,producto,ListaProductosOrigen,Estado ";
+        String sQuery = Select+ " FROM tblOrdenMAGDetalle";
+        sQuery = "SELECT Tratamiento IdDetalle,Naturaleza Cantidad  FROM tblOrdenMAG";
+        SqlCommand cmSQL = new SqlCommand(sQuery, Conn);
+        SqlDataAdapter da = new SqlDataAdapter(cmSQL);
+        da.Fill(dt);
+
+        Dictionary<string, object> row;
+        foreach (DataRow dr in dt.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);
+            }
+            rows.Add(row);
+        }
+        Conn.Close();
+        return rows;
+    }
 }
 
-public class Pojo {
 
+
+public class DetalleBandeja {
+    public int IdDetalle;
+    public int Cantidad;    
 }
