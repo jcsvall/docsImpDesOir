@@ -19,8 +19,6 @@ using System.Collections.Generic;
 public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
 {
     Funciones fn = new Funciones();
-    public static String Puesto;
-    public static String NoOrden;
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -1456,9 +1454,9 @@ public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
 
     public static void RedirectBandeja() {
         Utilidades Util = new Utilidades();
-        Puesto = GetPuesto();
-        NoOrden = GetNoOrden();
-        string Accion = Util.Acciones(Puesto, NoOrden);
+       //Puesto = GetPuesto();
+       //NoOrden = GetNoOrden();
+        string Accion = Util.Acciones(GetPuesto(), GetNoOrden());
         if (Accion.Equals("HacerRedirect")) {
             HttpContext.Current.Response.Redirect("Bandeja_Ordenes.aspx");
         }
@@ -1472,28 +1470,40 @@ public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
         Utilidades Util = new Utilidades();
         string NoOrden = Util.ObtenerValorVariable(HttpContext.Current.Request.QueryString["ord"]);
         return NoOrden;
-    }
+    }    
 
     [WebMethod()]
-    public static List<DetalleBandeja> GetOrdenesList(bool _search, int nd, int page, int rows, string sidx, string sord)
-    {
-        //bool _search,int nd, int page, int rows,string sidx, string sord
-        List<DetalleBandeja> Response = new List<DetalleBandeja>();
-        DetalleBandeja Det = new DetalleBandeja();
-        Det.IdDetalle = 1;
-        Det.Cantidad = 100;
-        Response.Add(Det);
-        JavaScriptSerializer ser = new JavaScriptSerializer();
-
-
-        //return ser.Serialize(Response);
-        return Response;
-    }
-
-    [WebMethod()]
-    public static List<Dictionary<string, object>> GetServiciosCIEX() {
-        Utilidades Util = new Utilidades();        
+    public static List<Dictionary<string, object>> GetServiciosCIEX(string Pto, string Ord) {
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
         return Util.GetDataTblOrdenMAGDet(Puesto, NoOrden);
     }
 
+    [WebMethod()]
+    public static string AccionBandejaCIEX(string Pto, string Ord)
+    {
+        if (Pto.ToLower().Equals("false") || Ord.ToLower().Equals("false")) {
+            return "ProcesoNormal";
+        }
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
+        return Util.Acciones(Puesto, NoOrden);
+    }
+
+    [WebMethod()]
+    public static string Prueba(object Arr) {
+        JavaScriptSerializer obj = new JavaScriptSerializer();
+        Pojo PObject = obj.ConvertToType<Pojo>(Arr);
+        return PObject.Encabezado.Nombre;
+    }
+
+}
+public class Pojo {
+    public Encabezado Encabezado;
+}
+
+public class Encabezado {
+    public string Nombre;
 }

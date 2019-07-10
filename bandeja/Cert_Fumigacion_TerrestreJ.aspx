@@ -318,7 +318,7 @@
         </table><br />
     </div>
     <div class="demoarea">
-        <table id="dataGrid"></table>
+        <table id="dataGrid" style="text-align: center;"></table>
         <div id="pagingGrid"></div>
         <div class="heading">Detalle del Servicio Aplicado</div>
         <table width="95%">

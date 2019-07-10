@@ -106,10 +106,9 @@ public class Utilidades
         Funciones fn = new Funciones();
         DataTable dt = new DataTable();
         List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
-        SqlConnection Conn = fn.ConnectionSql();
-        String Select = "SELECT Cantidad,QuimicoOirsaDescripcion,DosisOirsaDescripcion,Tiempo,UnidadTiempo,Origen,Destino,Procedencia,producto,ListaProductosOrigen,Estado ";
-        String sQuery = Select+ " FROM tblOrdenMAGDetalle";
-        sQuery = "SELECT Tratamiento IdDetalle,Naturaleza Cantidad  FROM tblOrdenMAG";
+        SqlConnection Conn = fn.ConnectionSql();       
+        String Select = "SELECT Cantidad,QuimicoOirsaDescripcion,DosisOirsaDescripcion,CONVERT(VARCHAR, Tiempo)+' '+UnidadTiempo Tiempo,UnidadTiempo,Origen,Destino,Procedencia,producto,ListaProductosOrigen,Estado ";
+        String sQuery = Select+ " FROM tblOrdenMAGDetalle WHERE PuestoFk='"+ Puesto + "' AND NoOrdenMAGFk='"+ NoOrden + "'";        
         SqlCommand cmSQL = new SqlCommand(sQuery, Conn);
         SqlDataAdapter da = new SqlDataAdapter(cmSQL);
         da.Fill(dt);
