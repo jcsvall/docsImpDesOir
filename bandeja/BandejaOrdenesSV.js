@@ -35,8 +35,11 @@ function getData(valorBusqueda, page) {
                     objeto.PuestoEncryp = itemData.PuestoEncryp;
                     objeto.NoOrdenEncryp = itemData.NoOrdenEncryp;
                     objeto.TipoTratamiento = itemData.TipoTratamiento;
-                    
-                    cadena += "<tr><td>" + itemData.Fecha + "</td><td>" + itemData.NoOrden + "</td><td>" + itemData.OperacionMag + "</td><td>" + itemData.TipoTratamiento + "</td><td>" + itemData.Puesto + "</td><td>" + itemData.Cliente + "</td>" + "</td><td>" + itemData.ResponsableMag + "</td>" + "</td><td>" + itemData.PlacaVapor + "</td>" + "</td><td>" + itemData.Producto + "</td>";
+                    var numOrden = itemData.NoOrden;
+                    if (numOrden.length > 15) {
+                        numOrden = numOrden.substring(0, 15) +" "+ numOrden.substring(15, numOrden.length);
+                    }
+                    cadena += "<tr><td>" + itemData.Fecha + "</td><td>" + numOrden + "</td><td>" + itemData.OperacionMag + "</td><td>" + itemData.TipoTratamiento + "</td><td>" + itemData.Puesto + "</td><td>" + itemData.Cliente + "</td>" + "</td><td>" + itemData.ResponsableMag + "</td>" + "</td><td>" + itemData.PlacaVapor + "</td>" + "</td><td>" + itemData.Producto + "</td>";
                     cadena += "<td><button type='button' class='btn btn-primary btn-sm' onClick='goTratamiento(" + JSON.stringify(objeto) + ")'><span class='oi oi-folder' style='font-size:75%' title='Ver'></span></button> </td></tr>";
                 });                
                 $("#tbody").html(cadena);

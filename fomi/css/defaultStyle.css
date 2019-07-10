@@ -10,3 +10,25 @@
 .accordionLink {font-weight: normal;}
 .border-style {border-color:black;border-style: dashed;}
 a:hover {text-decoration: none;}
+
+#ss{
+    /*overflow:scroll;*/
+    /*width:690px;*/
+    /*background-color:lightgray;*/
+}
+#tbl th{
+    /*width:400px;*/
+    /*background-color:lightgray;*/
+}
+.tamanio50 {
+    width:50px !important;
+}
+.tamanio75 {
+    width:75px !important;
+}
+.tamanio100 {
+    width:100px !important;
+}
+.tamanio150 {
+    width:150px !important;
+}

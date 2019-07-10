@@ -20,28 +20,34 @@
     </form>
 
     <div id="contenidoTabla">
-    <table class="table table-striped table-sm table-bordered" id="tbl">
-        <caption id="caption"></caption>
-            <thead>
-                <tr>
-                    <th scope="col">Fecha</th>
-                    <th scope="col">No. Orden</th>
-                    <th scope="col">Operacion MAG</th>
-                    <th scope="col">Tipo Tratamiento</th>
-                    <th scope="col">Puesto</th> 
-                    <th scope="col">Cliente</th> 
-                    <th scope="col">Responsable MAG</th>
-                    <th scope="col">Placa/Vapor</th> 
-                    <th scope="col">Producto</th> 
-                    <th scope="col">Acciones</th>                    
-                </tr>
-            </thead>
-            <tbody id="tbody">
-                             
-            </tbody>
-        </table>          
-
-    <nav aria-label="Page navigation example">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-sm table-bordered" id="tbl">
+                            <caption id="caption"></caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col"><div class="tamanio75">Fecha</div></th>
+                                    <th scope="col"><div>No. Orden</div></th>
+                                    <th scope="col"><div>Operacion MAG</div></th>
+                                    <th scope="col"><div>Tipo Tratamiento</div></th>
+                                    <th scope="col"><div>Puesto</div></th>
+                                    <th scope="col"><div>Cliente</div></th>
+                                    <th scope="col"><div>Responsable MAG</div></th>
+                                    <th scope="col"><div>Placa/Vapor</div></th>
+                                    <th scope="col"><div>Producto</div></th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav aria-label="Page navigation example">
             <ul class="pagination pagination-sm" id="pagineo">                
                             
             </ul>
