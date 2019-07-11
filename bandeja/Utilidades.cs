@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using System.Web.Script.Serialization;
 
 /// <summary>
 /// Summary description for Utilidades
@@ -188,11 +189,76 @@ public class Utilidades
         return rows;
     }
 
+    public string GuardarOrdenCIEX(object Objeto) {
+        JavaScriptSerializer obj = new JavaScriptSerializer();
+        Servicio Servicio = obj.ConvertToType<Servicio>(Objeto);
+        return Servicio.Enca.Puesto;
+    }
+
 }
 
 
 
-public class DetalleBandeja {
-    public int IdDetalle;
-    public int Cantidad;    
+public class Servicio
+{
+    public Enca Enca;
+    public List<DetalleServicio> Detalle;
+}
+
+public class Enca
+{
+    public string Puesto;
+    public string Fecha;
+    public string Cambio;
+    public string Cortesia;
+    public string Local;
+    public string Totalstring;
+    public string Observacion;
+    public string Responsable;
+    public bool Anulado;
+    public bool Remesado;
+    public bool Replicado;
+    public bool Nend;
+}
+
+public class DetalleServicio
+{
+    public string Servicio;
+    public string Cantidad;
+    public string US;
+    public string Local;
+    public string Total;
+    public string PlaguicidaN;
+    public string Plaguicida;
+    public string IdServicio;
+    public string IdPlaguicida;
+    public string SubTotal;
+    public string Dosis;
+    public string IdDosis;
+    public string Producto;
+    public string Ruta;
+    public string TipoAvion;
+    public string Procedencia;
+    public string Destino;
+    public string NVuelo;
+    public string TiempoExposicion;
+    public string UTiempo;
+    public string Matricula;
+    public string Razon;
+    public string LugarTra;
+    public string Origen;
+    public string IdPais;
+    public string UTiempoD;
+    public string Cantidadcubicad;
+    public string Temperatura;
+    public string Tiempoaereacion;
+    public string UtAereacion;
+    public string Densidad;
+    public string Teorico;
+    public string CantVol;
+    public string UC;
+    public string Contenedor;
+    public string Silo;
+    public string Concentracion;
+    public string Real;
 }

@@ -640,6 +640,7 @@
                     <asp:Label ID="Label1" runat="server" Visible="true" />
                    </div>
                    <input type="button" id="btGuardar" value=" Grabar Certificado " style="height:40px;" />
+                   <input type="button" id="btGuardarCIEX" value=" Grabar Certificado CIEX" style="height:40px; display:none" />
                 </td>
             </tr>
         </table>

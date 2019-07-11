@@ -33,7 +33,7 @@ public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
             {
                 try
                 {
-                    RedirectBandeja();
+                    //RedirectBandeja();
                     string variable = Request.QueryString["tp"].ToString();                    
 
                     if (variable == "M")
@@ -1483,7 +1483,7 @@ public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
     [WebMethod()]
     public static string AccionBandejaCIEX(string Pto, string Ord)
     {
-        if (Pto.ToLower().Equals("false") || Ord.ToLower().Equals("false")) {
+        if (Pto.ToLower().Equals("false") && Ord.ToLower().Equals("false")) {
             return "ProcesoNormal";
         }
         Utilidades Util = new Utilidades();
@@ -1499,6 +1499,13 @@ public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
         return PObject.Encabezado.Nombre;
     }
 
+    [WebMethod()]
+    public static string GuardarCIEX(object Arr)
+    {        
+        Utilidades Util = new Utilidades();
+        return Util.GuardarOrdenCIEX(Arr);
+    }
+
 }
 public class Pojo {
     public Encabezado Encabezado;
@@ -1507,3 +1514,53 @@ public class Pojo {
 public class Encabezado {
     public string Nombre;
 }
+
+//public class Servicio{
+//    public Enca Enca;
+//    public List<DetalleServicio> Detalle;
+//}
+
+//public class Enca {
+//    public string Puesto;
+//}
+
+//public class DetalleServicio {
+//    public string Servicio;
+//    public string Cantidad;
+//    public string US;
+//    public string Local;
+//    public string Total;
+//    public string PlaguicidaN;
+//    public string Plaguicida;
+//    public string IdServicio;
+//    public string IdPlaguicida;
+//    public string SubTotal;
+//    public string Dosis;
+//    public string IdDosis;
+//    public string Producto;
+//    public string Ruta;
+//    public string TipoAvion;
+//    public string Procedencia;
+//    public string Destino;
+//    public string NVuelo;
+//    public string TiempoExposicion;
+//    public string UTiempo;
+//    public string Matricula;
+//    public string Razon;
+//    public string LugarTra;
+//    public string Origen;
+//    public string IdPais;
+//    public string UTiempoD;
+//    public string Cantidadcubicad;
+//    public string Temperatura;
+//    public string Tiempoaereacion;
+//    public string UtAereacion;
+//    public string Densidad;
+//    public string Teorico;
+//    public string CantVol;
+//    public string UC;
+//    public string Contenedor;
+//    public string Silo;
+//    public string Concentracion;
+//    public string Real;
+//}

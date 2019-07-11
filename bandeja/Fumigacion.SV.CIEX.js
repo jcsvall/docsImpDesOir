@@ -1,4 +1,5 @@
 ﻿var accionBandeja = false;
+var reDirect = false;
 var varPto;
 var varOrd;
 $(document).ready(function () {
@@ -12,7 +13,15 @@ function procesar() {
     tipoProceso();
     if (accionBandeja) {
         cargarGridServiciosCIEX();
+        $("#btGuardarCIEX").show();
+        $("#btGuardar").hide();
     }
+    if (reDirect) {
+        window.location.href = "Bandeja_Orden.aspx";
+    }
+    $("#btGuardarCIEX").click(function () {
+        guardarCIEX();
+    });
 }
 
 function cargarGridServiciosCIEX() {
@@ -71,6 +80,9 @@ function tipoProceso() {
                 if (data == "ProcesoBandeja") {                    
                     accionBandeja = true;
                 }
+                if (data == "HacerRedirect") {
+                    reDirect = true;                    
+                }
             }
         },
         error: function (request, status, error) {
@@ -118,4 +130,52 @@ function test() {
             alert(jQuery.parseJSON(request.responseText).Message);
         }
     });
+}
+
+function guardarCIEX() {
+    var ids = jQuery("#jqAtomizacion").jqGrid('getDataIDs');
+    var obj = {
+        Enca: {
+            Puesto: "Envio de construccion de objeto",
+            Fecha: $("#ctl00_SampleContent_tb_fecha").val(),
+            Cambio: $.ConsultarQueryS("Cert_atomizacionJ.aspx/ObtenerValIni", { Val: "Cambio" }),
+            Cortesia: false,
+            Local: $("#ctl00_SampleContent_cb_local")[0].checked,
+            Totalstring: $("#ctl00_SampleContent_l_numlet").html(),
+            Observacion: $("#ctl00_SampleContent_tb_observaciones").val() + " " + $("#ctl00_SampleContent_tb_humedad_relativa").val(),
+            Responsable: $("#ctl00_SampleContent_ddl_cuarentena").val(),
+            Anulado: false,
+            Remesado: false,
+            Replicado: false,
+            Nend: true
+        },
+        Detalle: []
+    }
+    for (var i = 0; i < ids.length; i++) {
+        var rowId = ids[i];
+        var rowSelected = jQuery("#jqAtomizacion").jqGrid('getRowData', rowId);        
+        obj.Detalle.push(rowSelected);
+    }
+     
+    var Objeto = { Arr: obj };
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "Cert_Fumigacion_TerrestreJ.aspx/GuardarCIEX",
+        data: JSON.stringify(Objeto),
+        dataType: "json",
+        async: false,
+        cache: false,
+        success: function (data, textStatus) {
+            if (textStatus == "success") {
+                if (data == "ProcesoBandeja") {
+                    accionBandeja = true;
+                }
+            }
+        },
+        error: function (request, status, error) {
+            alert(jQuery.parseJSON(request.responseText).Message);
+        }
+    });
+
 }
