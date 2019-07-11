@@ -126,6 +126,68 @@ public class Utilidades
         Conn.Close();
         return rows;
     }
+
+    public List<Dictionary<string, object>> GetDataToBandeja(String Query)
+    {
+        Funciones fn = new Funciones();
+        DataTable dt = new DataTable();
+        List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+        String Clave = "BandejaOrden";
+        SqlConnection Conn = fn.ConnectionSql();        
+        SqlCommand cmSQL = new SqlCommand(Query, Conn);
+        SqlDataAdapter da = new SqlDataAdapter(cmSQL);
+        da.Fill(dt);
+
+        Dictionary<string, object> row;
+        foreach (DataRow dr in dt.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);
+
+                if ("Puesto".Equals(col.ColumnName))
+                {
+                    object NoOrden = dr[col];
+                    row.Add("PuestoEncryp", EncryptToBase64String(NoOrden.ToString(), Clave));
+                }
+
+                if ("NoOrdenMag".Equals(col.ColumnName)) {
+                    object NoOrden = dr[col];
+                    row.Add("NoOrdenEncryp", EncryptToBase64String(NoOrden.ToString(), Clave));                    
+                }
+                
+            }
+            rows.Add(row);
+        }
+        Conn.Close();
+        return rows;
+    }
+
+    public List<Dictionary<string, object>> GetDataToGQGrid(String Query)
+    {
+        Funciones fn = new Funciones();
+        DataTable dt = new DataTable();
+        List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+        SqlConnection Conn = fn.ConnectionSql();
+        SqlCommand cmSQL = new SqlCommand(Query, Conn);
+        SqlDataAdapter da = new SqlDataAdapter(cmSQL);
+        da.Fill(dt);
+
+        Dictionary<string, object> row;
+        foreach (DataRow dr in dt.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);               
+            }
+            rows.Add(row);
+        }
+        Conn.Close();
+        return rows;
+    }
+
 }
 
 
