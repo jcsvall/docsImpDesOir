@@ -192,7 +192,114 @@ public class Utilidades
     public string GuardarOrdenCIEX(object Objeto) {
         JavaScriptSerializer obj = new JavaScriptSerializer();
         Servicio Servicio = obj.ConvertToType<Servicio>(Objeto);
+
+        List<DetalleServicio> Detalle = Servicio.Detalle;
+
+        foreach (DetalleServicio Det in Detalle)
+        {
+            DetalleServicio DS = Det;
+            Console.WriteLine(Det.Destino);
+        }
+
+        InsertarDb(Servicio);
+
         return Servicio.Enca.Puesto;
+    }
+
+    public string InsertarDb(Servicio Servicio) {
+        Funciones fn = new Funciones();        
+        String queryInsertEncabezado = " insert into tblOrdenPagoCiex(id,Puesto,NCertificado,Cortesia,Local_,Anulado,Remesado,Replicado,NEnd,idPais,Fecha,Cambio,Total,TotalString,Observacion,Responsable,TipoCertificado,TipoCliente,ClienteExtra,Cliente,Vapor) ";
+        queryInsertEncabezado += "VALUES (@id,@Puesto,@NCertificado,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor)";
+        SqlCommand Command = new SqlCommand();
+        SqlTransaction Transaction;
+        SqlConnection Conn = fn.ConnectionSql();
+        Servicio.Enca.Puesto = HttpContext.Current.Session["idPuesto"].ToString();
+        Servicio.Enca.idpais = HttpContext.Current.Session["idPais"].ToString();
+        Transaction = Conn.BeginTransaction();
+        try
+        {
+            //Run all your insert statements here here
+            Command.CommandText = queryInsertEncabezado;
+            Command.Connection = Conn;
+            Command.Transaction = Transaction;
+
+            Command.Parameters.Add("@id", SqlDbType.Int);
+            Command.Parameters["@id"].Value = 1;
+
+            Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
+            Command.Parameters["@Puesto"].Value = Servicio.Enca.Puesto;
+
+            Command.Parameters.Add("@NCertificado", SqlDbType.VarChar);
+            Command.Parameters["@NCertificado"].Value = "1234";
+
+            Command.Parameters.Add("@Cortesia", SqlDbType.Bit);
+            Command.Parameters["@Cortesia"].Value = Servicio.Enca.Cortesia;
+
+            Command.Parameters.Add("@Local_", SqlDbType.Bit);
+            Command.Parameters["@Local_"].Value = Servicio.Enca.Local;
+
+            Command.Parameters.Add("@Anulado", SqlDbType.Bit);
+            Command.Parameters["@Anulado"].Value = Servicio.Enca.Anulado;
+
+            Command.Parameters.Add("@Remesado", SqlDbType.Bit);
+            Command.Parameters["@Remesado"].Value = Servicio.Enca.Remesado;
+
+            Command.Parameters.Add("@Replicado", SqlDbType.Bit);
+            Command.Parameters["@Replicado"].Value = Servicio.Enca.Replicado;
+
+            Command.Parameters.Add("@NEnd", SqlDbType.Bit);
+            Command.Parameters["@NEnd"].Value = Servicio.Enca.Nend;
+
+            Command.Parameters.Add("@idPais", SqlDbType.VarChar);
+            Command.Parameters["@idPais"].Value = Servicio.Enca.idpais;
+            //
+            Command.Parameters.Add("@Fecha", SqlDbType.DateTime);
+            Command.Parameters["@Fecha"].Value = DateTime.Now;
+
+            Command.Parameters.Add("@Cambio", SqlDbType.Real);
+            Command.Parameters["@Cambio"].Value = Servicio.Enca.Cambio;
+
+            Command.Parameters.Add("@Total", SqlDbType.Float);
+            Command.Parameters["@Total"].Value = Servicio.Enca.Total;
+
+            Command.Parameters.Add("@TotalString", SqlDbType.VarChar);
+            Command.Parameters["@TotalString"].Value = Servicio.Enca.Totalstring;
+
+            Command.Parameters.Add("@Observacion", SqlDbType.NVarChar);
+            Command.Parameters["@Observacion"].Value = Servicio.Enca.Observacion;
+
+            Command.Parameters.Add("@Responsable", SqlDbType.VarChar);
+            Command.Parameters["@Responsable"].Value = Servicio.Enca.Responsable;
+            //
+            Command.Parameters.Add("@TipoCertificado", SqlDbType.VarChar);
+            Command.Parameters["@TipoCertificado"].Value = Servicio.Enca.Tipocertificado;
+
+            Command.Parameters.Add("@TipoCliente", SqlDbType.Char);
+            Command.Parameters["@TipoCliente"].Value = Servicio.Enca.Tipocliente;
+
+            Command.Parameters.Add("@ClienteExtra", SqlDbType.VarChar);
+            Command.Parameters["@ClienteExtra"].Value = Servicio.Enca.Clienteextra;
+
+            Command.Parameters.Add("@Cliente", SqlDbType.VarChar);
+            Command.Parameters["@Cliente"].Value = Servicio.Enca.Cliente;
+
+            Command.Parameters.Add("@Vapor", SqlDbType.VarChar);
+            Command.Parameters["@Vapor"].Value = Servicio.Enca.Vapor;
+
+            Command.ExecuteNonQuery();
+            
+            Transaction.Commit();
+        }
+        catch (SqlException sqlex)
+        {
+            Transaction.Rollback();
+        }
+        finally
+        {
+            Conn.Close();
+        }
+
+        return null;
     }
 
 }
@@ -207,18 +314,45 @@ public class Servicio
 
 public class Enca
 {
-    public string Puesto;
-    public string Fecha;
-    public string Cambio;
-    public string Cortesia;
-    public string Local;
-    public string Totalstring;
-    public string Observacion;
-    public string Responsable;
-    public bool Anulado;
-    public bool Remesado;
-    public bool Replicado;
-    public bool Nend;
+    public string Puesto;//1
+    public string Fecha;//2
+    public Single Cambio;//3
+    public string Cortesia;//4
+    public string Local;//5
+    public double Total;//6
+    public string Totalstring;//7
+    public string Observacion;//8
+    public string Responsable;//9
+    public bool Anulado;//10
+    public bool Remesado;//11
+    public bool Replicado;//12
+    public bool Nend;//13
+    public string Tipocertificado;//14
+    public string Tipocliente;//15
+    public string Clienteextra;//16
+    public string Cliente;//17
+    public string Vapor;//18
+    public string Naduana;//19
+    public string Placa;//20
+    public double Impuesto;//21
+    public int Idccaja;//22
+    public bool Adeldia;//23
+    public bool Enviaplat;//24
+    public string Fechatrat;//25
+    public string FechatratFin;//26
+    public string Credito;//27
+    public string Norden;//28
+    public string Forden;//29, fPagoCiex, Estado
+    public string Aorden;//32
+    public string Cuarentena;//33
+    public string Idfactura;//34
+    public string Nviaje;//35
+    public string Fechaatraque;//36
+    public string idpais;//37
+    public bool Ingles;//38
+    public string NombreCliente;
+    public string FormaPago;
+
 }
 
 public class DetalleServicio
@@ -261,4 +395,5 @@ public class DetalleServicio
     public string Silo;
     public string Concentracion;
     public string Real;
+    public string MensajeJC;
 }
