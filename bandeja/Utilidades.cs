@@ -208,30 +208,34 @@ public class Utilidades
 
     public string InsertarDb(Servicio Servicio) {
         Funciones fn = new Funciones();        
-        String queryInsertEncabezado = " insert into tblOrdenPagoCiex(id,Puesto,NCertificado,Cortesia,Local_,Anulado,Remesado,Replicado,NEnd,idPais,Fecha,Cambio,Total,TotalString,Observacion,Responsable,TipoCertificado,TipoCliente,ClienteExtra,Cliente,Vapor) ";
-        queryInsertEncabezado += "VALUES (@id,@Puesto,@NCertificado,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor)";
+        String queryInsertEncabezado = " insert into tblOrdenPagoCiex( id, Puesto, Cortesia, Local_, Anulado, Remesado, Replicado, NEnd, idPais, Fecha, Cambio, Total, TotalString, Observacion, Responsable, TipoCertificado, TipoCliente, ClienteExtra, Cliente, Vapor, NAduana, Placa, Impuesto, FechaTrat, FechaTrat_Fin, FOrden, FechaAtraque, Credito, NOrden, Estado, AOrden, Cuarentena, IDFactura, NViaje, Ingles) ";
+        queryInsertEncabezado += "VALUES (Next value FOR sq_OrdenPagoCiex,@Puesto,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor,@NAduana,@Placa,@Impuesto,@FechaTrat,@FechaTrat_Fin,@FOrden,@FechaAtraque,@Credito,@NOrden,@Estado,@AOrden,@Cuarentena,@IDFactura,@NViaje,@Ingles)";
         SqlCommand Command = new SqlCommand();
         SqlTransaction Transaction;
         SqlConnection Conn = fn.ConnectionSql();
         Servicio.Enca.Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         Servicio.Enca.idpais = HttpContext.Current.Session["idPais"].ToString();
+        Servicio.Enca.Responsable = HttpContext.Current.Session["login"].ToString();
+
+        decimal Total = 0;
+        List<DetalleServicio> Detalle = Servicio.Detalle;
+        foreach (DetalleServicio det in Detalle)
+        {
+            Total = Total + det.Total;
+        }
+        Servicio.Enca.Total = Total;
+
         Transaction = Conn.BeginTransaction();
         try
         {
-            //Run all your insert statements here here
+            
             Command.CommandText = queryInsertEncabezado;
             Command.Connection = Conn;
             Command.Transaction = Transaction;
 
-            Command.Parameters.Add("@id", SqlDbType.Int);
-            Command.Parameters["@id"].Value = 1;
-
             Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
             Command.Parameters["@Puesto"].Value = Servicio.Enca.Puesto;
-
-            Command.Parameters.Add("@NCertificado", SqlDbType.VarChar);
-            Command.Parameters["@NCertificado"].Value = "1234";
-
+            
             Command.Parameters.Add("@Cortesia", SqlDbType.Bit);
             Command.Parameters["@Cortesia"].Value = Servicio.Enca.Cortesia;
 
@@ -259,7 +263,7 @@ public class Utilidades
             Command.Parameters.Add("@Cambio", SqlDbType.Real);
             Command.Parameters["@Cambio"].Value = Servicio.Enca.Cambio;
 
-            Command.Parameters.Add("@Total", SqlDbType.Float);
+            Command.Parameters.Add("@Total", SqlDbType.Decimal);
             Command.Parameters["@Total"].Value = Servicio.Enca.Total;
 
             Command.Parameters.Add("@TotalString", SqlDbType.VarChar);
@@ -285,7 +289,52 @@ public class Utilidades
 
             Command.Parameters.Add("@Vapor", SqlDbType.VarChar);
             Command.Parameters["@Vapor"].Value = Servicio.Enca.Vapor;
+            //
+            Command.Parameters.Add("@NAduana", SqlDbType.NVarChar);
+            Command.Parameters["@NAduana"].Value = Servicio.Enca.Naduana;
 
+            Command.Parameters.Add("@Placa", SqlDbType.Char);
+            Command.Parameters["@Placa"].Value = Servicio.Enca.Placa;
+
+            Command.Parameters.Add("@Impuesto", SqlDbType.Real);
+            Command.Parameters["@Impuesto"].Value = Servicio.Enca.Impuesto;
+            
+            Command.Parameters.Add("@FechaTrat", SqlDbType.DateTime);
+            Command.Parameters["@FechaTrat"].Value = Servicio.Enca.Fechatrat;
+            //
+            Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
+            Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;
+
+            Command.Parameters.Add("@FOrden", SqlDbType.DateTime);
+            Command.Parameters["@FOrden"].Value = DateTime.Now;
+
+            Command.Parameters.Add("@FechaAtraque", SqlDbType.DateTime);
+            Command.Parameters["@FechaAtraque"].Value = DateTime.Now;//buscar de donde viene
+            //
+            Command.Parameters.Add("@Credito", SqlDbType.Bit);
+            Command.Parameters["@Credito"].Value = Servicio.Enca.Credito;
+
+            Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
+            Command.Parameters["@NOrden"].Value = Servicio.Enca.Norden;
+
+            Command.Parameters.Add("@Estado", SqlDbType.VarChar);
+            Command.Parameters["@Estado"].Value = "PENDIENTE";
+
+            Command.Parameters.Add("@AOrden", SqlDbType.VarChar);
+            Command.Parameters["@AOrden"].Value = Servicio.Enca.Aorden;
+
+            Command.Parameters.Add("@Cuarentena", SqlDbType.VarChar);
+            Command.Parameters["@Cuarentena"].Value = Servicio.Enca.Cuarentena;
+            //
+            Command.Parameters.Add("@IDFactura", SqlDbType.VarChar);
+            Command.Parameters["@IDFactura"].Value = Servicio.Enca.Idfactura;
+
+            Command.Parameters.Add("@NViaje", SqlDbType.VarChar);
+            Command.Parameters["@NViaje"].Value = Servicio.Enca.Nviaje;
+
+            Command.Parameters.Add("@Ingles", SqlDbType.Bit);
+            Command.Parameters["@Ingles"].Value = Servicio.Enca.Ingles;
+           
             Command.ExecuteNonQuery();
             
             Transaction.Commit();
@@ -319,7 +368,7 @@ public class Enca
     public Single Cambio;//3
     public string Cortesia;//4
     public string Local;//5
-    public double Total;//6
+    public decimal Total;//6
     public string Totalstring;//7
     public string Observacion;//8
     public string Responsable;//9
@@ -361,7 +410,7 @@ public class DetalleServicio
     public string Cantidad;
     public string US;
     public string Local;
-    public string Total;
+    public decimal Total;
     public string PlaguicidaN;
     public string Plaguicida;
     public string IdServicio;
