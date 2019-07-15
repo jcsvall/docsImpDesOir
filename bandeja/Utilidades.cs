@@ -211,6 +211,7 @@ public class Utilidades
         String queryInsertEncabezado = " insert into tblOrdenPagoCiex( id, Puesto, Cortesia, Local_, Anulado, Remesado, Replicado, NEnd, idPais, Fecha, Cambio, Total, TotalString, Observacion, Responsable, TipoCertificado, TipoCliente, ClienteExtra, Cliente, Vapor, NAduana, Placa, Impuesto, FechaTrat, FechaTrat_Fin, FOrden, FechaAtraque, Credito, NOrden, Estado, AOrden, Cuarentena, IDFactura, NViaje, Ingles) ";
         queryInsertEncabezado += "VALUES (Next value FOR sq_OrdenPagoCiex,@Puesto,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor,@NAduana,@Placa,@Impuesto,@FechaTrat,@FechaTrat_Fin,@FOrden,@FechaAtraque,@Credito,@NOrden,@Estado,@AOrden,@Cuarentena,@IDFactura,@NViaje,@Ingles)";
         SqlCommand Command = new SqlCommand();
+        SqlCommand CommandDet = new SqlCommand();
         SqlTransaction Transaction;
         SqlConnection Conn = fn.ConnectionSql();
         Servicio.Enca.Puesto = HttpContext.Current.Session["idPuesto"].ToString();
@@ -233,109 +234,7 @@ public class Utilidades
             Command.Connection = Conn;
             Command.Transaction = Transaction;
 
-            Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
-            Command.Parameters["@Puesto"].Value = Servicio.Enca.Puesto;
-
-            Command.Parameters.Add("@Cortesia", SqlDbType.Bit);
-            Command.Parameters["@Cortesia"].Value = Servicio.Enca.Cortesia;
-
-            Command.Parameters.Add("@Local_", SqlDbType.Bit);
-            Command.Parameters["@Local_"].Value = Servicio.Enca.Local;
-
-            Command.Parameters.Add("@Anulado", SqlDbType.Bit);
-            Command.Parameters["@Anulado"].Value = Servicio.Enca.Anulado;
-
-            Command.Parameters.Add("@Remesado", SqlDbType.Bit);
-            Command.Parameters["@Remesado"].Value = Servicio.Enca.Remesado;
-
-            Command.Parameters.Add("@Replicado", SqlDbType.Bit);
-            Command.Parameters["@Replicado"].Value = Servicio.Enca.Replicado;
-
-            Command.Parameters.Add("@NEnd", SqlDbType.Bit);
-            Command.Parameters["@NEnd"].Value = Servicio.Enca.Nend;
-
-            Command.Parameters.Add("@idPais", SqlDbType.VarChar);
-            Command.Parameters["@idPais"].Value = Servicio.Enca.idpais;
-            //
-            Command.Parameters.Add("@Fecha", SqlDbType.DateTime);
-            Command.Parameters["@Fecha"].Value = DateTime.Now;
-
-            Command.Parameters.Add("@Cambio", SqlDbType.Real);
-            Command.Parameters["@Cambio"].Value = Servicio.Enca.Cambio;
-
-            Command.Parameters.Add("@Total", SqlDbType.Decimal);
-            Command.Parameters["@Total"].Value = Servicio.Enca.Total;
-
-            Command.Parameters.Add("@TotalString", SqlDbType.VarChar);
-            Command.Parameters["@TotalString"].Value = Servicio.Enca.Totalstring;
-
-            Command.Parameters.Add("@Observacion", SqlDbType.NVarChar);
-            Command.Parameters["@Observacion"].Value = Servicio.Enca.Observacion;
-
-            Command.Parameters.Add("@Responsable", SqlDbType.VarChar);
-            Command.Parameters["@Responsable"].Value = Servicio.Enca.Responsable;
-            //
-            Command.Parameters.Add("@TipoCertificado", SqlDbType.VarChar);
-            Command.Parameters["@TipoCertificado"].Value = Servicio.Enca.Tipocertificado;
-
-            Command.Parameters.Add("@TipoCliente", SqlDbType.Char);
-            Command.Parameters["@TipoCliente"].Value = Servicio.Enca.Tipocliente;
-
-            Command.Parameters.Add("@ClienteExtra", SqlDbType.VarChar);
-            Command.Parameters["@ClienteExtra"].Value = Servicio.Enca.Clienteextra;
-
-            Command.Parameters.Add("@Cliente", SqlDbType.VarChar);
-            Command.Parameters["@Cliente"].Value = Servicio.Enca.Cliente;
-
-            Command.Parameters.Add("@Vapor", SqlDbType.VarChar);
-            Command.Parameters["@Vapor"].Value = Servicio.Enca.Vapor;
-            //
-            Command.Parameters.Add("@NAduana", SqlDbType.NVarChar);
-            Command.Parameters["@NAduana"].Value = Servicio.Enca.Naduana;
-
-            Command.Parameters.Add("@Placa", SqlDbType.Char);
-            Command.Parameters["@Placa"].Value = Servicio.Enca.Placa;
-
-            Command.Parameters.Add("@Impuesto", SqlDbType.Real);
-            Command.Parameters["@Impuesto"].Value = Servicio.Enca.Impuesto;
-
-            Command.Parameters.Add("@FechaTrat", SqlDbType.DateTime);
-            Command.Parameters["@FechaTrat"].Value = Servicio.Enca.Fechatrat;
-            //
-            Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
-            Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;
-
-            Command.Parameters.Add("@FOrden", SqlDbType.DateTime);
-            Command.Parameters["@FOrden"].Value = DateTime.Now;
-
-            Command.Parameters.Add("@FechaAtraque", SqlDbType.DateTime);
-            Command.Parameters["@FechaAtraque"].Value = DateTime.Now;//buscar de donde viene
-            //
-            Command.Parameters.Add("@Credito", SqlDbType.Bit);
-            Command.Parameters["@Credito"].Value = Servicio.Enca.Credito;
-
-            Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
-            Command.Parameters["@NOrden"].Value = Servicio.Enca.Norden;
-
-            Command.Parameters.Add("@Estado", SqlDbType.VarChar);
-            Command.Parameters["@Estado"].Value = "PENDIENTE";
-
-            Command.Parameters.Add("@AOrden", SqlDbType.VarChar);
-            Command.Parameters["@AOrden"].Value = Servicio.Enca.Aorden;
-
-            Command.Parameters.Add("@Cuarentena", SqlDbType.VarChar);
-            Command.Parameters["@Cuarentena"].Value = Servicio.Enca.Cuarentena;
-            //
-            Command.Parameters.Add("@IDFactura", SqlDbType.VarChar);
-            Command.Parameters["@IDFactura"].Value = Servicio.Enca.Idfactura;
-
-            Command.Parameters.Add("@NViaje", SqlDbType.VarChar);
-            Command.Parameters["@NViaje"].Value = Servicio.Enca.Nviaje;
-
-            Command.Parameters.Add("@Ingles", SqlDbType.Bit);
-            Command.Parameters["@Ingles"].Value = Servicio.Enca.Ingles;
-
-            Command.ExecuteNonQuery();
+            int IdEncabezado = GuardarEncabezado(Command, Servicio);            
 
             Transaction.Commit();
         }
@@ -353,6 +252,115 @@ public class Utilidades
         }
 
         return null;
+    }
+
+    private int GuardarEncabezado(SqlCommand Command, Servicio Servicio) {
+
+        Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
+        Command.Parameters["@Puesto"].Value = Servicio.Enca.Puesto;
+
+        Command.Parameters.Add("@Cortesia", SqlDbType.Bit);
+        Command.Parameters["@Cortesia"].Value = Servicio.Enca.Cortesia;
+
+        Command.Parameters.Add("@Local_", SqlDbType.Bit);
+        Command.Parameters["@Local_"].Value = Servicio.Enca.Local;
+
+        Command.Parameters.Add("@Anulado", SqlDbType.Bit);
+        Command.Parameters["@Anulado"].Value = Servicio.Enca.Anulado;
+
+        Command.Parameters.Add("@Remesado", SqlDbType.Bit);
+        Command.Parameters["@Remesado"].Value = Servicio.Enca.Remesado;
+
+        Command.Parameters.Add("@Replicado", SqlDbType.Bit);
+        Command.Parameters["@Replicado"].Value = Servicio.Enca.Replicado;
+
+        Command.Parameters.Add("@NEnd", SqlDbType.Bit);
+        Command.Parameters["@NEnd"].Value = Servicio.Enca.Nend;
+
+        Command.Parameters.Add("@idPais", SqlDbType.VarChar);
+        Command.Parameters["@idPais"].Value = Servicio.Enca.idpais;
+        //
+        Command.Parameters.Add("@Fecha", SqlDbType.DateTime);
+        Command.Parameters["@Fecha"].Value = DateTime.Now;
+
+        Command.Parameters.Add("@Cambio", SqlDbType.Real);
+        Command.Parameters["@Cambio"].Value = Servicio.Enca.Cambio;
+
+        Command.Parameters.Add("@Total", SqlDbType.Decimal);
+        Command.Parameters["@Total"].Value = Servicio.Enca.Total;
+
+        Command.Parameters.Add("@TotalString", SqlDbType.VarChar);
+        Command.Parameters["@TotalString"].Value = Servicio.Enca.Totalstring;
+
+        Command.Parameters.Add("@Observacion", SqlDbType.NVarChar);
+        Command.Parameters["@Observacion"].Value = Servicio.Enca.Observacion;
+
+        Command.Parameters.Add("@Responsable", SqlDbType.VarChar);
+        Command.Parameters["@Responsable"].Value = Servicio.Enca.Responsable;
+        //
+        Command.Parameters.Add("@TipoCertificado", SqlDbType.VarChar);
+        Command.Parameters["@TipoCertificado"].Value = Servicio.Enca.Tipocertificado;
+
+        Command.Parameters.Add("@TipoCliente", SqlDbType.Char);
+        Command.Parameters["@TipoCliente"].Value = Servicio.Enca.Tipocliente;
+
+        Command.Parameters.Add("@ClienteExtra", SqlDbType.VarChar);
+        Command.Parameters["@ClienteExtra"].Value = Servicio.Enca.Clienteextra;
+
+        Command.Parameters.Add("@Cliente", SqlDbType.VarChar);
+        Command.Parameters["@Cliente"].Value = Servicio.Enca.Cliente;
+
+        Command.Parameters.Add("@Vapor", SqlDbType.VarChar);
+        Command.Parameters["@Vapor"].Value = Servicio.Enca.Vapor;
+        //
+        Command.Parameters.Add("@NAduana", SqlDbType.NVarChar);
+        Command.Parameters["@NAduana"].Value = Servicio.Enca.Naduana;
+
+        Command.Parameters.Add("@Placa", SqlDbType.Char);
+        Command.Parameters["@Placa"].Value = Servicio.Enca.Placa;
+
+        Command.Parameters.Add("@Impuesto", SqlDbType.Real);
+        Command.Parameters["@Impuesto"].Value = Servicio.Enca.Impuesto;
+
+        Command.Parameters.Add("@FechaTrat", SqlDbType.DateTime);
+        Command.Parameters["@FechaTrat"].Value = Servicio.Enca.Fechatrat;
+        //
+        Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
+        Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;
+
+        Command.Parameters.Add("@FOrden", SqlDbType.DateTime);
+        Command.Parameters["@FOrden"].Value = DateTime.Now;
+
+        Command.Parameters.Add("@FechaAtraque", SqlDbType.DateTime);
+        Command.Parameters["@FechaAtraque"].Value = DateTime.Now;//buscar de donde viene
+                                                                 //
+        Command.Parameters.Add("@Credito", SqlDbType.Bit);
+        Command.Parameters["@Credito"].Value = Servicio.Enca.Credito;
+
+        Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
+        Command.Parameters["@NOrden"].Value = Servicio.Enca.Norden;
+
+        Command.Parameters.Add("@Estado", SqlDbType.VarChar);
+        Command.Parameters["@Estado"].Value = "PENDIENTE";
+
+        Command.Parameters.Add("@AOrden", SqlDbType.VarChar);
+        Command.Parameters["@AOrden"].Value = Servicio.Enca.Aorden;
+
+        Command.Parameters.Add("@Cuarentena", SqlDbType.VarChar);
+        Command.Parameters["@Cuarentena"].Value = Servicio.Enca.Cuarentena;
+        //
+        Command.Parameters.Add("@IDFactura", SqlDbType.VarChar);
+        Command.Parameters["@IDFactura"].Value = Servicio.Enca.Idfactura;
+
+        Command.Parameters.Add("@NViaje", SqlDbType.VarChar);
+        Command.Parameters["@NViaje"].Value = Servicio.Enca.Nviaje;
+
+        Command.Parameters.Add("@Ingles", SqlDbType.Bit);
+        Command.Parameters["@Ingles"].Value = Servicio.Enca.Ingles;
+
+        Command.ExecuteNonQuery();
+
+        return 1;
     }
 
 }
