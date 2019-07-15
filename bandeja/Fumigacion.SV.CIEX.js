@@ -17,11 +17,15 @@ function procesar() {
         $("#btGuardar").hide();
     }
     if (reDirect) {
-        window.location.href = "Bandeja_Orden.aspx";
+        redirectBandejaCIEX();
     }
     $("#btGuardarCIEX").click(function () {
         guardarCIEX();
     });
+}
+
+function redirectBandejaCIEX() {
+    window.location.href = "Bandeja_Orden.aspx";
 }
 
 function cargarGridServiciosCIEX() {
@@ -229,12 +233,11 @@ function guardarCIEX() {
         cache: false,
         success: function (data, textStatus) {
             if (textStatus == "success") {
-                if (data == "ProcesoBandeja") {
-                    accionBandeja = true;
-                }
+                alert("Orden de Pago CIEX creada satisfactoriamente");
+                redirectBandejaCIEX();
             }
         },
-        error: function (request, status, error) {
+        error: function (request, status, error) {            
             alert(jQuery.parseJSON(request.responseText).Message);
         }
     });

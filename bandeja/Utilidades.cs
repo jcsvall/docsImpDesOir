@@ -228,14 +228,14 @@ public class Utilidades
         Transaction = Conn.BeginTransaction();
         try
         {
-            
+
             Command.CommandText = queryInsertEncabezado;
             Command.Connection = Conn;
             Command.Transaction = Transaction;
 
             Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
             Command.Parameters["@Puesto"].Value = Servicio.Enca.Puesto;
-            
+
             Command.Parameters.Add("@Cortesia", SqlDbType.Bit);
             Command.Parameters["@Cortesia"].Value = Servicio.Enca.Cortesia;
 
@@ -298,7 +298,7 @@ public class Utilidades
 
             Command.Parameters.Add("@Impuesto", SqlDbType.Real);
             Command.Parameters["@Impuesto"].Value = Servicio.Enca.Impuesto;
-            
+
             Command.Parameters.Add("@FechaTrat", SqlDbType.DateTime);
             Command.Parameters["@FechaTrat"].Value = Servicio.Enca.Fechatrat;
             //
@@ -334,14 +334,18 @@ public class Utilidades
 
             Command.Parameters.Add("@Ingles", SqlDbType.Bit);
             Command.Parameters["@Ingles"].Value = Servicio.Enca.Ingles;
-           
+
             Command.ExecuteNonQuery();
-            
+
             Transaction.Commit();
         }
         catch (SqlException sqlex)
         {
             Transaction.Rollback();
+            throw new Exception("Error: "+ sqlex, sqlex);
+        }
+        catch (Exception e) {
+            throw new Exception("Error: " + e, e);
         }
         finally
         {
