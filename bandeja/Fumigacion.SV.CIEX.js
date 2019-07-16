@@ -20,7 +20,8 @@ function procesar() {
         redirectBandejaCIEX();
     }
     $("#btGuardarCIEX").click(function () {
-        guardarCIEX();
+        //guardarCIEX();
+        validaciones();
     });
 }
 
@@ -241,5 +242,18 @@ function guardarCIEX() {
             alert(jQuery.parseJSON(request.responseText).Message);
         }
     });
+
+}
+
+function validaciones() {
+    var correcto = true;
+    var nOrden = $("#ctl00_SampleContent_tb_numero_orden").val();
+    if (nOrden.trim().length < 1) {
+        correcto = false;
+        alert("Ingrese número de Orden");
+    }
+    if (correcto) {
+        guardarCIEX();
+    }
 
 }

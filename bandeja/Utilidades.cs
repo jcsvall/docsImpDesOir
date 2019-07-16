@@ -260,7 +260,7 @@ public class Utilidades
         int response = 0;
         String queryInsertEncabezado = " insert into tblOrdenPagoCiex( id, Puesto, Cortesia, Local_, Anulado, Remesado, Replicado, NEnd, idPais, Fecha, Cambio, Total, TotalString, Observacion, Responsable, TipoCertificado, TipoCliente, ClienteExtra, Cliente, Vapor, NAduana, Placa, Impuesto, FechaTrat, FechaTrat_Fin, FOrden, FechaAtraque, Credito, NOrden, Estado, AOrden, Cuarentena, IDFactura, NViaje, Ingles) ";
         queryInsertEncabezado += "VALUES (Next value FOR sq_OrdenPagoCiex,@Puesto,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor,@NAduana,@Placa,@Impuesto,@FechaTrat,@FechaTrat_Fin,@FOrden,@FechaAtraque,@Credito,@NOrden,@Estado,@AOrden,@Cuarentena,@IDFactura,@NViaje,@Ingles)";
-
+        
         Command.CommandText = queryInsertEncabezado;
 
         Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
@@ -312,9 +312,18 @@ public class Utilidades
         Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
         Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;
         Command.Parameters.Add("@FOrden", SqlDbType.DateTime);
-        Command.Parameters["@FOrden"].Value = DateTime.Now;
-        Command.Parameters.Add("@FechaAtraque", SqlDbType.DateTime);
-        Command.Parameters["@FechaAtraque"].Value = DateTime.Now;//buscar de donde viene
+        Command.Parameters["@FOrden"].Value = DateTime.Now;        
+        
+        if (!Servicio.Enca.Fechaatraque.Equals(" "))   
+        {
+            Command.Parameters.AddWithValue("@FechaAtraque", Servicio.Enca.Fechaatraque);
+        }
+        else
+        {
+            Command.Parameters.AddWithValue("@FechaAtraque", DBNull.Value);
+        }
+        //Command.Parameters.Add("@FechaAtraque", SqlDbType.DateTime);
+        //Command.Parameters["@FechaAtraque"].Value = DateTime.Now;//buscar de donde viene
         Command.Parameters.Add("@Credito", SqlDbType.Bit);
         Command.Parameters["@Credito"].Value = Servicio.Enca.Credito;
         Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
@@ -347,7 +356,7 @@ public class Utilidades
     private void GuardarDetalle(SqlConnection Conn, SqlTransaction Transaction, Servicio Servicio, int IdEncabezado) {
 
         List<DetalleServicio> Detalle = Servicio.Detalle;
-        int idIn = 10;
+       
         foreach (DetalleServicio det in Detalle)
         {
             SqlCommand Command = new SqlCommand();
@@ -358,134 +367,91 @@ public class Utilidades
             det.IdPais = Servicio.Enca.idpais;
             det.Session = HttpContext.Current.Session["session"].ToString();
 
-            String QueryInsertDet = "INSERT INTO tblOrdenPagoCiexDetalle(id, Puesto, NOrden, idPais, idOrdenCiex, DB, Servicio, Cantidad, SubTotal, US, Local, Plaguicida, Dosis, UD, Real, Producto, Ruta, Procedencia, Destino, TiempoExposicion, UT, Session, CantVol, UC, EnviaPlat, CantidadCubicada, Teorico, Densidad, Contenedor, Silo, LugTrat, Concentracion, Temperatura, TiempoAereacion, UT_Aereacion, Origen, TipoAvion, NVuelo, Razon, NActa) ";
-            QueryInsertDet += "                                 VALUES (@id,@Puesto,@NOrden,@idPais,@idOrdenCiex,@DB,@Servicio,@Cantidad,@SubTotal,@US,@Local,@Plaguicida,@Dosis,@UD,@Real,@Producto,@Ruta,@Procedencia,@Destino,@TiempoExposicion,@UT,@Session,@CantVol,@UC,@EnviaPlat,@CantidadCubicada,@Teorico,@Densidad,@Contenedor,@Silo,@LugTrat,@Concentracion,@Temperatura,@TiempoAereacion,@UT_Aereacion,@Origen,@TipoAvion,@NVuelo,@Razon,@NActa)";
+            String QueryInsertDet = "  INSERT INTO tblOrdenPagoCiexDetalle(id, Puesto, NOrden, idPais, idOrdenCiex, DB, Servicio, Cantidad, SubTotal, US, Local, Plaguicida, Dosis, UD, Real, Producto, Ruta, Procedencia, Destino, TiempoExposicion, UT, Session, CantVol, UC, EnviaPlat, CantidadCubicada, Teorico, Densidad, Contenedor, Silo, LugTrat, Concentracion, Temperatura, TiempoAereacion, UT_Aereacion, Origen, TipoAvion, NVuelo, Razon, NActa) ";
+            QueryInsertDet += "VALUES (Next value FOR sq_OrdenPagoCiexDetalle,@Puesto,@NOrden,@idPais,@idOrdenCiex,@DB,@Servicio,@Cantidad,@SubTotal,@US,@Local,@Plaguicida,@Dosis,@UD,@Real,@Producto,@Ruta,@Procedencia,@Destino,@TiempoExposicion,@UT,@Session,@CantVol,@UC,@EnviaPlat,@CantidadCubicada,@Teorico,@Densidad,@Contenedor,@Silo,@LugTrat,@Concentracion,@Temperatura,@TiempoAereacion,@UT_Aereacion,@Origen,@TipoAvion,@NVuelo,@Razon,@NActa)";
             
             Command.CommandText = QueryInsertDet;
-
-            Command.Parameters.Add("@id", SqlDbType.Int);
-            Command.Parameters["@id"].Value = idIn;
-
+                        
             Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
             Command.Parameters["@Puesto"].Value = det.Puesto;
-
             Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
             Command.Parameters["@NOrden"].Value = Servicio.Enca.Norden;
-
             Command.Parameters.Add("@idPais", SqlDbType.VarChar);
             Command.Parameters["@idPais"].Value = det.IdPais;
-
             Command.Parameters.Add("@idOrdenCiex", SqlDbType.Int);
             Command.Parameters["@idOrdenCiex"].Value = IdEncabezado;
-
             Command.Parameters.Add("@DB", SqlDbType.Bit);
             Command.Parameters["@DB"].Value = det.Db;
-            //
             Command.Parameters.Add("@Servicio", SqlDbType.VarChar);
             Command.Parameters["@Servicio"].Value = det.IdServicio;
-
             Command.Parameters.Add("@Cantidad", SqlDbType.Float);
             Command.Parameters["@Cantidad"].Value = det.Cantidad;
-
             Command.Parameters.Add("@SubTotal", SqlDbType.Decimal);
             Command.Parameters["@SubTotal"].Value = det.SubTotal;
-            //
             Command.Parameters.Add("@US", SqlDbType.Real);
             Command.Parameters["@US"].Value = det.US;
-
             Command.Parameters.Add("@Local", SqlDbType.Real);
             Command.Parameters["@Local"].Value = det.Local;
-
             Command.Parameters.Add("@Plaguicida", SqlDbType.VarChar);
             Command.Parameters["@Plaguicida"].Value = det.Plaguicida;
-
             Command.Parameters.Add("@Dosis", SqlDbType.Real);
             Command.Parameters["@Dosis"].Value = det.Dosis;
-            //
             Command.Parameters.Add("@UD", SqlDbType.VarChar);
             Command.Parameters["@UD"].Value = det.IdDosis;
-
             Command.Parameters.Add("@Real", SqlDbType.Real);
             Command.Parameters["@Real"].Value = det.Real;
-
             Command.Parameters.Add("@Producto", SqlDbType.SmallInt);
             Command.Parameters["@Producto"].Value = det.Producto;
-
             Command.Parameters.Add("@Ruta", SqlDbType.VarChar);
             Command.Parameters["@Ruta"].Value = det.Ruta;
-            //
             Command.Parameters.Add("@Procedencia", SqlDbType.VarChar);
             Command.Parameters["@Procedencia"].Value = det.Procedencia;
-
             Command.Parameters.Add("@Destino", SqlDbType.VarChar);
             Command.Parameters["@Destino"].Value = det.Destino;
-
             Command.Parameters.Add("@TiempoExposicion", SqlDbType.Real);
             Command.Parameters["@TiempoExposicion"].Value = det.TiempoExposicion;
-
             Command.Parameters.Add("@UT", SqlDbType.VarChar);
             Command.Parameters["@UT"].Value = det.UTiempoD;
-            //
             Command.Parameters.Add("@Session", SqlDbType.Char);
             Command.Parameters["@Session"].Value = det.Session;
-
             Command.Parameters.Add("@CantVol", SqlDbType.Real);
             Command.Parameters["@CantVol"].Value = det.CantVol;
-
             Command.Parameters.Add("@UC", SqlDbType.VarChar);
             Command.Parameters["@UC"].Value = det.UC;
-
             Command.Parameters.Add("@EnviaPlat", SqlDbType.Bit);
             Command.Parameters["@EnviaPlat"].Value = det.Enviaplat;
-
             Command.Parameters.Add("@CantidadCubicada", SqlDbType.Real);
             Command.Parameters["@CantidadCubicada"].Value = det.Cantidadcubicad;
-
             Command.Parameters.Add("@Teorico", SqlDbType.Real);
             Command.Parameters["@Teorico"].Value = det.Teorico;
-            //
             Command.Parameters.Add("@Densidad", SqlDbType.VarChar);
             Command.Parameters["@Densidad"].Value = det.Densidad;
-
             Command.Parameters.Add("@Contenedor", SqlDbType.VarChar);
             Command.Parameters["@Contenedor"].Value = det.Contenedor;
-
             Command.Parameters.Add("@Silo", SqlDbType.VarChar);
             Command.Parameters["@Silo"].Value = det.Silo;
-
             Command.Parameters.Add("@LugTrat", SqlDbType.VarChar);
             Command.Parameters["@LugTrat"].Value = det.LugarTra;
-
             Command.Parameters.Add("@Concentracion", SqlDbType.NVarChar);
             Command.Parameters["@Concentracion"].Value = det.Concentracion;
-
             Command.Parameters.Add("@Temperatura", SqlDbType.Float);
             Command.Parameters["@Temperatura"].Value = det.Temperatura;
-            //
             Command.Parameters.Add("@TiempoAereacion", SqlDbType.Real);
             Command.Parameters["@TiempoAereacion"].Value = det.Tiempoaereacion;
-
             Command.Parameters.Add("@UT_Aereacion", SqlDbType.VarChar);
             Command.Parameters["@UT_Aereacion"].Value = det.UtAereacion;
-
             Command.Parameters.Add("@Origen", SqlDbType.VarChar);
             Command.Parameters["@Origen"].Value = det.Origen;
-            //
             Command.Parameters.Add("@TipoAvion", SqlDbType.VarChar);
             Command.Parameters["@TipoAvion"].Value = det.TipoAvion;
-
             Command.Parameters.Add("@NVuelo", SqlDbType.VarChar);
             Command.Parameters["@NVuelo"].Value = det.NVuelo;
-
             Command.Parameters.Add("@Razon", SqlDbType.VarChar);
             Command.Parameters["@Razon"].Value = det.Razon;
-
             Command.Parameters.Add("@NActa", SqlDbType.VarChar);
             Command.Parameters["@NActa"].Value = det.Nacta;
 
-
-            Command.ExecuteNonQuery();
-            idIn++;
+            Command.ExecuteNonQuery();            
         }
 
     }
