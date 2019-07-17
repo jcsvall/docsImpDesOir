@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.IO;
+using System.Web.Script.Serialization;
 
 public partial class Bandeja_Orden : System.Web.UI.Page
 {  
@@ -92,4 +93,66 @@ public partial class Bandeja_Orden : System.Web.UI.Page
         return response;
     }
 
+    public static string GetPuesto()
+    {
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(HttpContext.Current.Request.QueryString["pto"]);
+        return Puesto;
+    }
+
+    //Metodos que sirven para los diferentes tipos de certificados.
+    public static string GetNoOrden()
+    {
+        Utilidades Util = new Utilidades();
+        string NoOrden = Util.ObtenerValorVariable(HttpContext.Current.Request.QueryString["ord"]);
+        return NoOrden;
+    }
+
+    [WebMethod()]
+    public static List<Dictionary<string, object>> GetServiciosCIEX(string Pto, string Ord)
+    {
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
+        return Util.GetDataTblOrdenMAGDet(Puesto, NoOrden);
+    }
+
+    [WebMethod()]
+    public static string AccionBandejaCIEX(string Pto, string Ord)
+    {
+        if (Pto.ToLower().Equals("false") && Ord.ToLower().Equals("false"))
+        {
+            return "ProcesoNormal";
+        }
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
+        return Util.Acciones(Puesto, NoOrden);
+    }
+
+    [WebMethod()]
+    public static string Prueba(object Arr)
+    {
+        JavaScriptSerializer obj = new JavaScriptSerializer();
+        Pojo PObject = obj.ConvertToType<Pojo>(Arr);
+        return PObject.Encabezado.Nombre;
+    }
+
+    [WebMethod()]
+    public static string GuardarCIEX(object Arr)
+    {
+        Utilidades Util = new Utilidades();
+        return Util.GuardarOrdenCIEX(Arr);
+    }
+
+}
+
+public class Pojo
+{
+    public Encabezado Encabezado;
+}
+
+public class Encabezado
+{
+    public string Nombre;
 }
