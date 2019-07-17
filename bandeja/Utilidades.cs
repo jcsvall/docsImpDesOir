@@ -216,6 +216,7 @@ public class Utilidades
         Servicio.Enca.Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         Servicio.Enca.idpais = HttpContext.Current.Session["idPais"].ToString();
         Servicio.Enca.Responsable = HttpContext.Current.Session["login"].ToString();
+        Servicio.Enca.NordenCIEX = ObtenerValorVariable(Servicio.Enca.NordenCIEX);
 
         decimal Total = 0;
         List<DetalleServicio> Detalle = Servicio.Detalle;
@@ -309,12 +310,20 @@ public class Utilidades
         Command.Parameters["@Impuesto"].Value = Servicio.Enca.Impuesto;
         Command.Parameters.Add("@FechaTrat", SqlDbType.DateTime);
         Command.Parameters["@FechaTrat"].Value = Servicio.Enca.Fechatrat;
-        Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
-        Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;
+        //Command.Parameters.Add("@FechaTrat_Fin", SqlDbType.DateTime);
+        //Command.Parameters["@FechaTrat_Fin"].Value = Servicio.Enca.FechatratFin;        
+        if (!Servicio.Enca.FechatratFin.Trim().Equals(""))
+        {
+            Command.Parameters.AddWithValue("@FechaTrat_Fin", Servicio.Enca.FechatratFin);
+        }
+        else
+        {
+            Command.Parameters.AddWithValue("@FechaTrat_Fin", DBNull.Value);
+        }
         Command.Parameters.Add("@FOrden", SqlDbType.DateTime);
         Command.Parameters["@FOrden"].Value = DateTime.Now;        
         
-        if (!Servicio.Enca.Fechaatraque.Equals(" "))   
+        if (!Servicio.Enca.Fechaatraque.Trim().Equals(""))   
         {
             Command.Parameters.AddWithValue("@FechaAtraque", Servicio.Enca.Fechaatraque);
         }
@@ -356,7 +365,7 @@ public class Utilidades
     private void GuardarDetalle(SqlConnection Conn, SqlTransaction Transaction, Servicio Servicio, int IdEncabezado) {
 
         List<DetalleServicio> Detalle = Servicio.Detalle;
-       
+        
         foreach (DetalleServicio det in Detalle)
         {
             SqlCommand Command = new SqlCommand();
@@ -366,16 +375,39 @@ public class Utilidades
             det.Puesto = Servicio.Enca.Puesto;
             det.IdPais = Servicio.Enca.idpais;
             det.Session = HttpContext.Current.Session["session"].ToString();
+            if (det.UC == null) {
+                det.UC = "";
+            }
+            if (det.Densidad == null)
+            {
+                det.Densidad = "";
+            }
+            if (det.Contenedor == null)
+            {
+                det.Contenedor = "";
+            }
+            if (det.Concentracion == null)
+            {
+                det.Concentracion = "";
+            }
+            if (det.Silo == null)
+            {
+                det.Silo = "";
+            }
+            if (det.UtAereacion == null)
+            {
+                det.UtAereacion = "";
+            }
 
-            String QueryInsertDet = "  INSERT INTO tblOrdenPagoCiexDetalle(id, Puesto, NOrden, idPais, idOrdenCiex, DB, Servicio, Cantidad, SubTotal, US, Local, Plaguicida, Dosis, UD, Real, Producto, Ruta, Procedencia, Destino, TiempoExposicion, UT, Session, CantVol, UC, EnviaPlat, CantidadCubicada, Teorico, Densidad, Contenedor, Silo, LugTrat, Concentracion, Temperatura, TiempoAereacion, UT_Aereacion, Origen, TipoAvion, NVuelo, Razon, NActa) ";
-            QueryInsertDet += "VALUES (Next value FOR sq_OrdenPagoCiexDetalle,@Puesto,@NOrden,@idPais,@idOrdenCiex,@DB,@Servicio,@Cantidad,@SubTotal,@US,@Local,@Plaguicida,@Dosis,@UD,@Real,@Producto,@Ruta,@Procedencia,@Destino,@TiempoExposicion,@UT,@Session,@CantVol,@UC,@EnviaPlat,@CantidadCubicada,@Teorico,@Densidad,@Contenedor,@Silo,@LugTrat,@Concentracion,@Temperatura,@TiempoAereacion,@UT_Aereacion,@Origen,@TipoAvion,@NVuelo,@Razon,@NActa)";
+            String QueryInsertDet = "  INSERT INTO tblOrdenPagoCiexDetalle(id, Puesto, idPais, idOrdenCiex, DB, Servicio, Cantidad, SubTotal, US, Local, Plaguicida, Dosis, UD, Real, Producto, Ruta, Procedencia, Destino, TiempoExposicion, UT, Session, CantVol, UC, EnviaPlat, CantidadCubicada, Teorico, Densidad, Contenedor, Silo, LugTrat, Concentracion, Temperatura, TiempoAereacion, UT_Aereacion, Origen, TipoAvion, NVuelo, Razon, NActa) ";
+            QueryInsertDet += "VALUES (Next value FOR sq_OrdenPagoCiexDetalle,@Puesto,@idPais,@idOrdenCiex,@DB,@Servicio,@Cantidad,@SubTotal,@US,@Local,@Plaguicida,@Dosis,@UD,@Real,@Producto,@Ruta,@Procedencia,@Destino,@TiempoExposicion,@UT,@Session,@CantVol,@UC,@EnviaPlat,@CantidadCubicada,@Teorico,@Densidad,@Contenedor,@Silo,@LugTrat,@Concentracion,@Temperatura,@TiempoAereacion,@UT_Aereacion,@Origen,@TipoAvion,@NVuelo,@Razon,@NActa)";
             
             Command.CommandText = QueryInsertDet;
                         
             Command.Parameters.Add("@Puesto", SqlDbType.VarChar);
             Command.Parameters["@Puesto"].Value = det.Puesto;
-            Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
-            Command.Parameters["@NOrden"].Value = Servicio.Enca.Norden;
+            //Command.Parameters.Add("@NOrden", SqlDbType.VarChar);
+            //Command.Parameters["@NOrden"].Value = 123;
             Command.Parameters.Add("@idPais", SqlDbType.VarChar);
             Command.Parameters["@idPais"].Value = det.IdPais;
             Command.Parameters.Add("@idOrdenCiex", SqlDbType.Int);
@@ -506,6 +538,9 @@ public class Enca
     public bool Ingles;//38
     public string NombreCliente;
     public string FormaPago;
+    public string PlacaDos;
+    public string NumeroBL;
+    public string NordenCIEX;
 
 }
 
