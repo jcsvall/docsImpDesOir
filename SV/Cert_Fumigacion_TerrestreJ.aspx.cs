@@ -13,9 +13,10 @@ using System.Web.UI.HtmlControls;
 using System.Web.Script.Services;
 using System.Web.Script.Serialization;
 using System.Web.Services;
+using System.Collections.Generic;
 
 [System.Web.Script.Services.ScriptService]
-public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
+public partial class Cert_Fumigacion_TerrestreJ : System.Web.UI.Page
 {
     Funciones fn = new Funciones();
 
@@ -23,12 +24,32 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
     {
         if (Session["IDUsuario"] == null)
         {
+            
             Response.Redirect("Login.aspx");
         }
         else
         {
             if (true)
             {
+                try
+                {
+                    //RedirectBandeja();
+                    string variable = Request.QueryString["tp"].ToString();                    
+
+                    if (variable == "M")
+                    {
+                        hdTipo.Value = variable;
+                    }
+                    else
+                    {
+                        hdTipo.Value = "T";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    hdTipo.Value = "T";
+                }
+
                 String Sql;
                 SqlConnection SqlConn = fn.ConnectionSql();
 
@@ -37,7 +58,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 string npagina = "";
 
                 permiso = fn.PaginaPermiso(fn.PaginaActual(), Session["IDEmpleado"].ToString(), Session["idPais"].ToString(), SqlConn);
-                npagina = fn.PaginaNombre("Cert_Fumigacion_Maritima.aspx", Session["IDEmpleado"].ToString(), Session["idPais"].ToString(), SqlConn);
+                npagina = fn.PaginaNombre("Cert_Fumigacion_Terrestre.aspx", Session["IDEmpleado"].ToString(), Session["idPais"].ToString(), SqlConn);
                 if (permiso == false)
                 {
                     //Response.Redirect("Autorizacion.aspx?pagina=" + npagina.ToString() + "&select=" + Request["select"]);
@@ -73,9 +94,9 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 }
                 else
                 {
-
-                    l_n_certificado.Text = ncertificado.ToString();
-                  
+                    
+                            l_n_certificado.Text = ncertificado.ToString(); 
+                    
                 }
 
                 //Se busca el numero de certificado
@@ -101,7 +122,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                         if (cuantos == 1)
                         {
                             Sql = "select Count(NCertificado) from tblCertifDet where NCertificado='" + l_n_certificado.Text + "' and Puesto='" + Session["idPuesto"] + "' and idPais='" + Session["idPais"] + "'";
-                            if(fn.EjecutarScalarDouble(Sql,SqlConn)==0)
+                            if (fn.EjecutarScalarDouble(Sql, SqlConn) == 0)
                                 fn.Eliminar_Certificado(l_n_certificado.Text, Session["idPuesto"].ToString(), Session["idPais"].ToString(), SqlConn);
                         }
                     }
@@ -127,7 +148,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                         cb_local.Enabled = true;
                     }
                 }
-                if (!IsPostBack)
+                if (!Page.IsPostBack)
                 {
                     //Se verifica el tipo de pago del puesto
                     String TipoPuesto;
@@ -155,6 +176,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                     ddl_cliente.DataBind();
                     SqlDatCli.Close();
 
+                    cfe_grabar.ConfirmText = "Certificado :" + l_n_certificado.Text + " \n Cliente: " + ddl_cliente.SelectedItem + " \n Monto a cobrar: " + tb_total.Text + " \n\n Desea Continuar?";
                     Informacion_Cliente(ddl_cliente.SelectedValue);
 
                     Sql = "Select (Servicio + '-' + Plaguicida) as Servicio, Nombre from tblServicio where Activo=1 and Tipo='FUMIGACIÓN' and idPais='" + Session["idPais"] + "' order by Nombre";
@@ -341,13 +363,12 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                     tb_fecha.Text = Convert.ToString(DateTime.Now.Month) + "/" + Convert.ToString(DateTime.Now.Day) + "/" + Convert.ToString(DateTime.Now.Year);
                     tb_fecha_tratamiento.Text = Convert.ToString(DateTime.Now.Month) + "/" + Convert.ToString(DateTime.Now.Day) + "/" + Convert.ToString(DateTime.Now.Year);
                     tb_fecha_tratamiento_fin.Text = Convert.ToString(DateTime.Now.Month) + "/" + Convert.ToString(DateTime.Now.Day) + "/" + Convert.ToString(DateTime.Now.Year);
-                    tb_fecha_atraque.Text = Convert.ToString(DateTime.Now.Month) + "/" + Convert.ToString(DateTime.Now.Day) + "/" + Convert.ToString(DateTime.Now.Year);
                     tb_fecha_orden.Text = Convert.ToString(DateTime.Now.Month) + "/" + Convert.ToString(DateTime.Now.Day) + "/" + Convert.ToString(DateTime.Now.Year);
 
                     SqlConn.Close();
                 }
-            }
         }
+    }
     }
 
     //Proceso que cambia el tipo de cliente en el combo (CREDITO ó CONTADO)
@@ -387,7 +408,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         String Sql;
         SqlConnection SqlConn = fn.ConnectionSql();
 
-        Sql = "Select b.Plaguicida, a.Nombre from tblPlaguicida a, tblInvExistencia b where a.Plaguicida like '01%'and a.Plaguicida=b.Plaguicida and b.Puesto='" + Session["idPuesto"] + "'  and a.idPais='" + Session["idPais"] + "' and b.idPais='" + Session["idPais"] + "' order by Nombre";
+        Sql = "Select b.Plaguicida, a.Nombre from tblPlaguicida a, tblInvExistencia b where a.Plaguicida like '01%'and a.Plaguicida=b.Plaguicida and b.Puesto='" + Session["idPuesto"] + "' and b.Existencia>0 and a.idPais='" + Session["idPais"] + "' and b.idPais='" + Session["idPais"] + "' order by Nombre";
         SqlCommand SqlComm = new SqlCommand(Sql, SqlConn);
         SqlDataReader SqlDat = SqlComm.ExecuteReader();
         ddl_plaguicida.DataValueField = "Plaguicida";
@@ -470,13 +491,14 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
     //Cubicaje a utilizar
     void lugar_tratado(SqlConnection cnn)
     {
+        bool cproducto = false;
         bool tipo = false;
-        string sql,sqlp;
+        string sql, sqlp;
 
         sqlp = "select Producto,Nombre from tblProducto where idPais='" + Session["idPais"] + "' order by Nombre";
 
-        tb_contenedor.Visible = false;
-        l_contenedor.Visible = false;
+        tb_contenedor.Visible = true;
+        l_contenedor.Visible = true;
         ddl_producto.AutoPostBack = false;
 
         switch (ddl_lugar_tratado.SelectedItem.Text)
@@ -486,28 +508,28 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 sqlp = "select Producto,Nombre from tblProducto where Producto in (select distinct Producto from tblDensidad where idPais='" + Session["idPais"] + "') and idPais='" + Session["idPais"] + "' order by Nombre";
                 tipo = true;
                 l_tipo.Text = "Densidad";
-//                p_tipo.Visible = true;
-                ddl_producto.AutoPostBack = true;
+                //p_tipo.Visible = true;
+               // ddl_producto.AutoPostBack = true;
                 break;
             case "Contenedor":
                 sql = "select idContenedor as Codigo,Nombre as Descripcion from tblContenedor where idPais='" + Session["idPais"] + "'";
                 sqlp = "select Producto,Nombre from tblProducto where idPais='" + Session["idPais"] + "' order by Nombre";
                 tipo = true;
                 l_tipo.Text = "Contenedor";
-//                p_tipo.Visible = true;
+                //p_tipo.Visible = true;
                 break;
             case "Silo":
                 sql = "select idSilo as Codigo,Descripcion from tblSilo where idPais='" + Session["idPais"] + "'";
                 sqlp = "select Producto,Nombre from tblProducto where idPais='" + Session["idPais"] + "' order by Nombre";
                 tipo = true;
                 l_tipo.Text = "Silo";
-//                p_tipo.Visible = true;
+                //p_tipo.Visible = true;
                 break;
             default:
                 sql = "";
                 sqlp = "select Producto,Nombre from tblProducto where idPais='" + Session["idPais"] + "' order by Nombre";
                 tipo = false;
-//                p_tipo.Visible = false;
+                //p_tipo.Visible = false;
                 break;
         }
 
@@ -522,7 +544,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         if (ddl_lugar_tratado.SelectedItem.Text == "Bodega de Cereales")
         {
             sql = "select idDensidad as Codigo,Descripcion from tblDensidad where Producto=" + ddl_producto.SelectedValue + " and idPais='" + Session["idPais"] + "'";
-            ddl_producto.AutoPostBack = true;
+          //  ddl_producto.AutoPostBack = true;
         }
 
         if (tipo)
@@ -554,6 +576,78 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         }
 
         consumo_real();
+    }
+    [WebMethod(EnableSession = true)]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public static string ObtenerTipoTra(string Tipo, string idProducto)
+    {
+        Funciones fn = new Funciones();
+        SqlConnection SqlConn = fn.ConnectionSql();
+
+        String sql = ""; 
+        switch (Tipo)
+        {
+            case "Bodega de Cereales":
+                sql = "select Cubicaje as Codigo,Descripcion from tblDensidad where Producto=" + idProducto + " and idPais='" + HttpContext.Current.Session["idPais"] + "'";
+                break;
+            case "Contenedor":
+                sql = "select Cubicaje as Codigo,Nombre as Descripcion from tblContenedor where idPais='" + HttpContext.Current.Session["idPais"] + "'";
+                break;
+            case "Silo":
+                sql = "select Cubicaje as Codigo,Descripcion from tblSilo where idPais='" + HttpContext.Current.Session["idPais"] + "'";
+                break;
+            default:
+
+                break;
+        }
+        JavaScriptSerializer ser = new JavaScriptSerializer();
+        if (string.IsNullOrEmpty(sql))
+        {
+            return "";
+        }
+        SqlCommand SqlComm = new SqlCommand(sql, SqlConn);
+        SqlDataAdapter da = new SqlDataAdapter();
+        da.SelectCommand = SqlComm;
+        DataSet DS = new DataSet();
+        da.Fill(DS);
+        
+
+        return ser.Serialize(Helpers.ToList(DS.Tables[0], false));
+
+        
+    }
+    [WebMethod(EnableSession = true)]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public static string ObtenerProductoInfo(string Tipo)
+    {
+        Funciones fn = new Funciones();
+        SqlConnection SqlConn = fn.ConnectionSql();
+
+        String sqlp = "select Producto,Nombre from tblProducto where idPais='" + HttpContext.Current.Session["idPais"] + "' order by Nombre";
+        switch (Tipo)
+        {
+            case "Bodega de Cereales":
+                sqlp = "select Producto,Nombre from tblProducto where Producto in (select distinct Producto from tblDensidad where idPais='" + HttpContext.Current.Session["idPais"] + "') and idPais='" + HttpContext.Current.Session["idPais"] + "' order by Nombre";
+                break;
+            case "Contenedor":
+            case "Silo":
+                sqlp = "select Producto,Nombre from tblProducto where idPais='" + HttpContext.Current.Session["idPais"] + "' order by Nombre";
+                break;
+            default:
+                sqlp = "select Producto,Nombre from tblProducto where idPais='" + HttpContext.Current.Session["idPais"] + "' order by Nombre";
+                break;
+        }
+
+        SqlCommand SqlComm = new SqlCommand(sqlp, SqlConn);
+        SqlDataAdapter da = new SqlDataAdapter();
+        da.SelectCommand = SqlComm;
+        DataSet DS = new DataSet();
+        da.Fill(DS);
+        JavaScriptSerializer ser = new JavaScriptSerializer();
+
+        return ser.Serialize(Helpers.ToList(DS.Tables[0], false));
+
+
     }
 
     //Calculo de subtotal del servicio seleccionado
@@ -656,12 +750,12 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
 
         //Se busca la existencia actual y se le quita el consumo temporal
         Double existencia;
-        if(fn.ValIni(Session["idPais"].ToString(), "ConsumoAutomatico", SqlConn)=="1")
+        if (fn.ValIni(Session["idPais"].ToString(), "ConsumoAutomatico", SqlConn) == "1")
             existencia = fn.Plaguicida_Existencia(ddl_plaguicida.SelectedValue, Session["idPuesto"].ToString(), Session["idPais"].ToString(), SqlConn) - egreso_temporal;
         else
             existencia = 100000000;
 
-        if (Convert.ToDouble(tb_consumo_real.Text)<=existencia && fn.Certificado_Existe(l_n_certificado.Text, Session["idPuesto"].ToString(), Session["idPais"].ToString(), SqlConn) == 0 && Convert.ToDouble(tb_consumo_real.Text)>0)
+        if (Convert.ToDouble(tb_consumo_real.Text)<=existencia && fn.Certificado_Existe(l_n_certificado.Text, Session["idPuesto"].ToString(), Session["idPais"].ToString(), SqlConn) == 0 && Convert.ToDouble(tb_consumo_real.Text) > 0)
         {
             switch (ddl_lugar_tratado.SelectedItem.Text)
             {
@@ -704,7 +798,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 ut_aereacion = "Null";
             }
 
-            Sql = "insert into tblCertifDet (Puesto,NCertificado,Servicio,Cantidad,US,Local,SubTotal,Plaguicida,Dosis,UD,Real,Producto,Ruta,Procedencia,Destino,TiempoExposicion,UT,DB,[Session],CantVol,UC,CantidadCubicada,Teorico,Densidad,Contenedor,Silo,LugTrat,Origen,Concentracion,Temperatura,TiempoAereacion,UT_Aereacion,idPais) values ('" + Session["idPuesto"] + "','";
+            Sql = "insert into tblCertifDet (Puesto,NCertificado,Servicio,Cantidad,US,Local,SubTotal,Plaguicida,Dosis,UD,Real,Producto,Ruta,Procedencia,Destino,TiempoExposicion,UT,DB,Session,CantVol,UC,CantidadCubicada,Teorico,Densidad,Contenedor,Silo,LugTrat,Origen,Concentracion,Temperatura,TiempoAereacion,UT_Aereacion,idPais) values ('" + Session["idPuesto"] + "','";
             Sql = Sql + l_n_certificado.Text + "','" + servicio[0] + "'," + tb_cantidad.Text + "," + tb_costo_us.Text + "," + Convert.ToString(Math.Round(Convert.ToDouble(tb_costo_local.Text), 2)) + "," + Convert.ToString(Math.Round(Convert.ToDouble(tb_subtotal.Text), 2)) + ",'";
             Sql = Sql + ddl_plaguicida.SelectedValue + "'," + tb_dosis.Text + ",'" + dosis[0] + "'," + tb_consumo_real.Text + ",'" + ddl_producto.SelectedValue + "','" + ddl_ruta.SelectedItem + "','";
             Sql = Sql + ddl_procedencia.SelectedItem + "','" + ddl_destino.SelectedItem + "'," + tb_tiempo_exposicion.Text + ",'" + ddl_unidad_tiempo.SelectedItem + "',0,'" + Session["session"] + "'," + tb_peso_producto.Text + ",'" + ddl_peso_producto.SelectedItem + "'," + tb_cantidad_cubicada.Text + "," + tb_consumo_teorico.Text + ",";
@@ -719,7 +813,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
             if (fn.ValIni(Session["idPais"].ToString(), "ConsumoAutomatico", SqlConn) == "1")
             {
                 //Se recupera el ultimo detalle de la tblCertifDet
-                Sql = "select max(detalle) from tblCertifDet where Puesto='" + Session["idPuesto"] + "' and idPais='" + Session["idPais"] + "' and NCertificado='" + l_n_certificado.Text + "' and [Session]='" + Session["session"] + "'";
+                Sql = "select max(detalle) from tblCertifDet where Puesto='" + Session["idPuesto"] + "' and idPais='" + Session["idPais"] + "' and NCertificado='" + l_n_certificado.Text + "'";
                 Double ultimoid = fn.EjecutarScalarDouble(Sql, SqlConn);
 
                 //Registro de salida del quimico
@@ -739,9 +833,9 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 Sql = Sql + Session["login"] + "','" + fecha + "',0,0,'Consumo automatico por fumigación [NCertificado:" + l_n_certificado.Text + "]','" + l_n_certificado.Text + "'," + costo.ToString() + ",'" + fecha_d + "','" + Convert.ToString(ultimoid) + "','" + Session["session"] + "','" + Session["idPais"] + "')";
 
                 fn.EjecutarNonQuery(Sql, SqlConn);
-
-                fn.Incrementar_Correlativo(Session["idPais"].ToString(), Session["idPuesto"].ToString(), "IdKardex", SqlConn);
             }
+
+            fn.Incrementar_Correlativo(Session["idPais"].ToString(), Session["idPuesto"].ToString(), "IdKardex", SqlConn);
 
             cfe_grabar.ConfirmText = "Certificado :" + l_n_certificado.Text + " \n Cliente: " + ddl_cliente.SelectedItem + " \n Monto a cobrar: " + tb_total.Text + " \n\n Desea Continuar?";
         }
@@ -819,7 +913,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         String narchivo = "";
         Boolean enarchivo = true;
         int tarchivo = 0;
-        if (fu_archivo.PostedFile!=null && fu_archivo.PostedFile.ContentLength>0)
+        if (fu_archivo.PostedFile != null && fu_archivo.PostedFile.ContentLength > 0)
         {
             narchivo = System.IO.Path.GetFileName(fu_archivo.PostedFile.FileName); //Nombre del archivo
             tarchivo = fu_archivo.PostedFile.ContentLength; //Tamaño del archivo
@@ -829,7 +923,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 enarchivo = false;
         }
 
-        if (tarchivo < 204800 && enarchivo && Convert.ToDouble(tb_subtotalg.Text) == Math.Round(total, 2) && cert_det == Convert.ToDouble(l_servicios.Text) && cert_det > 0 && ddl_cliente.SelectedValue.Trim() != "" && ddl_cuarentena.SelectedValue.Trim() != "" && tb_fecha_tratamiento.Text.Trim().Length != 0)
+        if (tarchivo < 102400 && enarchivo && Convert.ToDouble(tb_subtotalg.Text) == Math.Round(total, 2) && cert_det == Convert.ToDouble(l_servicios.Text) && cert_det > 0 && ddl_cliente.SelectedValue.Trim() != "" && ddl_cuarentena.SelectedValue.Trim() != "" && tb_fecha_tratamiento.Text.Trim().Length != 0)
         {
             //Se graba en la tblCertifMDP
             if (cb_cliente_contado.Checked == true)
@@ -859,7 +953,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 Local = "0";
             }
 
-            if (Convert.ToDouble(tb_recargo.Text)>0)
+            if (Convert.ToDouble(tb_recargo.Text) > 0)
             {
                 Sql = "insert into tblCertifDet (Puesto,Ncertificado,Servicio,Cantidad,US,local,subtotal,DB,idPais) values ('" + Session["idPuesto"] + "','" + l_n_certificado.Text + "','";
                 Sql = Sql + fn.ValIni(Session["idPais"].ToString(), "CuentaRecargo", SqlConn) + "',1," + tb_recargo.Text + "," + tb_recargo.Text + "," + tb_recargo.Text + ",0,'" + Session["idPais"] + "')";
@@ -870,24 +964,14 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
             SqlCertifMdp = SqlCertifMdp + MDP.ToString() + "," + tb_total.Text + ",0," + tb_total.Text + ",0,0,'" + Session["idPais"] + "')";
 
             //Se graba en la tblCertif
-            String nviaje;
-            if (tb_nviaje.Text.Length == 0)
+            String nplaca;
+            if (tb_nplaca.Text.Length == 0)
             {
-                nviaje = "";
+                nplaca = "";
             }
             else
             {
-                nviaje = tb_nviaje.Text;
-            }
-
-            String nvapor;
-            if (tb_nvapor.Text.Length == 0)
-            {
-                nvapor = "";
-            }
-            else
-            {
-                nvapor = tb_nvapor.Text;
+                nplaca = tb_nplaca.Text;
             }
 
             String observacion;
@@ -908,16 +992,6 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
             else
             {
                 norden = tb_numero_orden.Text;
-            }
-
-            String fecha_atraque;
-            if (tb_fecha_atraque.Text.ToString().Length == 0)
-            {
-                fecha_atraque = DateTime.Now.ToString();
-            }
-            else
-            {
-                fecha_atraque = tb_fecha_atraque.Text;
             }
 
             String fecha_orden;
@@ -941,9 +1015,9 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
 
             String fecha = tb_fecha.Text + " " + DateTime.Now.ToLongTimeString();
 
-            SqlCertif = "insert into tblCertif (Puesto,Ncertificado,Fecha,Cambio,Cortesia,Local,Total,TotalString,Observacion,Responsable,Anulado,Remesado,Replicado,NEnd,TipoCertificado,TipoCliente,ClienteExtra,Cliente,Vapor,NAduana,FechaTrat,FechaTrat_Fin,NViaje,FechaAtraque,NOrden,FOrden,AOrden,Cuarentena,idPais) values ('";
+            SqlCertif = "insert into tblCertif (Puesto,Ncertificado,Fecha,Cambio,Cortesia,Local,Total,TotalString,Observacion,Responsable,Anulado,Remesado,Replicado,NEnd,TipoCertificado,TipoCliente,ClienteExtra,Cliente,NAduana,Placa,FechaTrat,FechaTrat_Fin,NOrden,FOrden,AOrden,Cuarentena,idPais) values ('";
             SqlCertif = SqlCertif + Session["idPuesto"] + "','" + l_n_certificado.Text + "','" + fecha.ToString() + "'," + tb_cambio.Text + "," + Cortesia.ToString() + "," + Local + "," + tb_total.Text + ",'" + l_numlet.Text + "','" + observacion.ToString() + "','";
-            SqlCertif = SqlCertif + Session["login"] + "',0,0,0,1,'FUMIGACIÓN MARITIMA','" + tipo_cliente + "','" + tb_cliente.Text + "','" + ddl_cliente.SelectedValue + "','" + nvapor.ToString() + "','" + ddl_motivo.SelectedValue + "','" + fecha_trat_ini + "','" + fecha_trat_fin + "','" + nviaje.ToString() + "','" + fecha_atraque + "','" + norden + "','" + fecha_orden + "','" + narchivo + "','" + ddl_cuarentena.SelectedValue + "','" + Session["idPais"] + "')";
+            SqlCertif = SqlCertif + Session["login"] + "',0,0,0,1,'FUMIGACIÓN TERRESTRE','" + tipo_cliente + "','" + tb_cliente.Text + "','" + ddl_cliente.SelectedValue + "','" + ddl_motivo.SelectedValue + "','" + nplaca.ToString() + "','" + fecha_trat_ini + "','" + fecha_trat_fin + "','" + norden + "','" + fecha_orden + "','" + narchivo + "','" + ddl_cuarentena.SelectedValue + "','" + Session["idPais"] + "')";
 
             bool error = false;
 
@@ -953,7 +1027,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 fn.EjecutarNonQuery(SqlCertifMdp, SqlConn);
 
                 //Se graba el archivo en el servidor
-                if(narchivo.Length>0)
+                if (narchivo.Length > 0)
                     fu_archivo.PostedFile.SaveAs(Server.MapPath(".").ToString() + "\\images\\" + narchivo);
             }
             catch
@@ -964,7 +1038,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
             {
                 if (error)
                 {
-                    Response.Redirect("Cert_Fumigacion_Maritima.aspx?error=ok&ncertif=" + l_n_certificado.Text);
+                    Response.Redirect("Cert_Fumigacion_Terrestre.aspx?error=ok&ncertif=" + l_n_certificado.Text);
                 }
                 else
                 {
@@ -981,11 +1055,11 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
 
                         SqlConn.Close();
 
-                        Response.Redirect("Cert_Fumigacion_Maritima.aspx?save=ok&ncertif=" + l_n_certificado.Text);
+                        Response.Redirect("Cert_Fumigacion_Terrestre.aspx?save=ok&ncertif=" + l_n_certificado.Text);
                     }
                     else
                     {
-                        Response.Redirect("Cert_Fumigacion_Maritima.aspx?error=ok&ncertif=" + l_n_certificado.Text);
+                        Response.Redirect("Cert_Fumigacion_Terrestre.aspx?error=ok&ncertif=" + l_n_certificado.Text);
                     }
                 }
             }
@@ -994,7 +1068,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         {
             if (cert_det == 0 || cert_det != Convert.ToDouble(l_servicios.Text) || Convert.ToDouble(tb_subtotalg.Text) != Math.Round(total, 2))
             {
-                Response.Redirect("Cert_Fumigacion_Maritima.aspx?error=ok");
+                Response.Redirect("Cert_Fumigacion_Terrestre.aspx?error=ok");
             }
             else
             {
@@ -1005,11 +1079,11 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 else
                 {
                     if (tarchivo > 102400)
-                        fn.Message(Page, "No se puede grabar este archivo ya que excede los 200 KB de limite!");
+                        fn.Message(Page, "No se puede grabar este archivo ya que excede los 100 KB de limite!");
                     else
                         fn.Message(Page, "Verificar! Hay campos que son obligatorios como el CLIENTE, FECHA TRATAMIENTO y ENCARGADO DE CUARENTENA");
                 }
-            }     
+            }
         }
     }
 
@@ -1094,7 +1168,29 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         consumo_real();
         ddl_producto.Focus();
     }
+    [WebMethod(EnableSession = true)]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public static string ServiceSobreCargo(string Servicio)
+    {
+        Funciones fn = new Funciones();
+        SqlConnection SqlConn = fn.ConnectionSql();
+        
 
+        //ddl_plaguicida.Items.FindByValue(plaguicida[1]).Selected = true;
+
+        string Sql = "select   Servicio + '-' + CONVERT(char(10), PrcUnit) AS Servicio, Nombre, Plaguicida "
+        + " from tblServicio where Activo=1 and Tipo='" + Servicio + "' and idPais='" + HttpContext.Current.Session["idPais"].ToString() + "'";
+
+        SqlCommand SqlComm = new SqlCommand(Sql, SqlConn);
+        SqlDataAdapter da = new SqlDataAdapter();
+        da.SelectCommand = SqlComm;
+        DataSet DS = new DataSet();
+        da.Fill(DS);
+        JavaScriptSerializer ser = new JavaScriptSerializer();
+
+
+        return ser.Serialize(Helpers.ToList(DS.Tables[0], false));
+    }
     protected void tb_cantidad_cubicada_TextChanged(object sender, EventArgs e)
     {
         consumo_real();
@@ -1112,7 +1208,7 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         if (tb_consumo_real.Text.ToString().Length == 0)
             tb_consumo_real.Text = "0";
 
-        tb_desviacion.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_consumo_real.Text) - Convert.ToDouble(tb_consumo_teorico.Text),2));
+        tb_desviacion.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_consumo_real.Text) - Convert.ToDouble(tb_consumo_teorico.Text), 2));
         tb_tiempo_exposicion.Focus();
     }
 
@@ -1187,6 +1283,42 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         }
     }
 
+    [WebMethod(EnableSession = true)]
+    [System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public static string ObtenerCubicajeInfo(string Tipo,String tipodes) {
+        String sql="";
+        switch (tipodes)
+        {
+            case "Bodega de Cereales":
+                sql = "select Descripcion Nombre, Cubicaje from tblDensidad where idDensidad=" + Tipo + " and idPais='" + HttpContext.Current.Session["idPais"] + "'";
+                
+                break;
+            case "Contenedor":
+                sql = "select  Nombre,Cubicaje from tblContenedor where idContenedor=" + Tipo + " and idPais='" + HttpContext.Current.Session["idPais"] + "'";
+                
+                break;
+            case "Silo":
+                sql = "select Descripcion Nombre, Cubicaje  from tblSilo where idSilo=" + Tipo + " and idPais='" + HttpContext.Current.Session["idPais"] + "'";                
+                break;
+        }
+        if (sql != "")
+        {
+            Funciones fn = new Funciones();
+            fn.ConnectionSql();
+            SqlDataAdapter da = new SqlDataAdapter(sql, fn._LocalC);
+            DataSet DS = new DataSet();
+            da.Fill(DS);
+            fn._LocalC.Close();
+
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+
+            return ser.Serialize(Helpers.ToList(DS.Tables[0], false));
+        }
+        else {
+            return "Otro";
+        }
+
+    }
     protected void ddl_tipo_SelectedIndexChanged(object sender, EventArgs e)
     {
         String sql;
@@ -1225,8 +1357,8 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         }
         else
         {
-            tb_contenedor.Visible = false;
-            l_contenedor.Visible = false;
+            tb_contenedor.Visible = true;
+            l_contenedor.Visible = true;
             tb_consumo_real.Focus();
         }
 
@@ -1247,8 +1379,8 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
         if (ddl_lugar_tratado.SelectedItem.Text == "Bodega de Cereales")
         {
             // (peso * dosis[1000 p3/28 m3])/densidad
-            tb_cantidad_cubicada.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_peso_producto.Text) / Convert.ToDouble(tb_tipo.Text),2));
-            tb_consumo_teorico.Text = Convert.ToString(Math.Round((Convert.ToDouble(tb_dosis.Text) * Convert.ToDouble(tb_peso_producto.Text))/Convert.ToDouble(tb_tipo.Text), 2));
+            tb_cantidad_cubicada.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_peso_producto.Text) / Convert.ToDouble(tb_tipo.Text), 2));
+            tb_consumo_teorico.Text = Convert.ToString(Math.Round((Convert.ToDouble(tb_dosis.Text) * Convert.ToDouble(tb_peso_producto.Text)) / Convert.ToDouble(tb_tipo.Text), 2));
             tb_desviacion.Text = Convert.ToString(Convert.ToDouble(tb_consumo_real.Text) - Convert.ToDouble(tb_consumo_teorico.Text));
         }
         else
@@ -1264,13 +1396,13 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
                 tb_consumo_teorico.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_dosis.Text) * Convert.ToDouble(tb_cantidad_cubicada.Text), 2));
                 tb_desviacion.Text = Convert.ToString(Convert.ToDouble(tb_consumo_real.Text) - Convert.ToDouble(tb_consumo_teorico.Text));
             }
-            
+
         }
     }
 
     protected void tb_peso_producto_tm_TextChanged(object sender, EventArgs e)
     {
-        if(tb_peso_producto_tm.Text!="0" && tb_peso_producto_tm.Text.Trim().Length>0)
+        if(tb_peso_producto_tm.Text != "0" && tb_peso_producto_tm.Text.Trim().Length > 0)
         {
             tb_peso_producto.Text = Convert.ToString(Math.Round(Convert.ToDouble(tb_peso_producto_tm.Text) * 22.046, 3));
             ddl_peso_producto.Text = "QQ";
@@ -1314,4 +1446,121 @@ public partial class Cert_Fumigacion_MaritimaJ : System.Web.UI.Page
 
         SqlConn.Close();
     }
+
+    protected void tb_peso_producto_TextChanged(object sender, EventArgs e)
+    {
+        consumo_real();
+    }
+
+    public static void RedirectBandeja() {
+        Utilidades Util = new Utilidades();
+       //Puesto = GetPuesto();
+       //NoOrden = GetNoOrden();
+        string Accion = Util.Acciones(GetPuesto(), GetNoOrden());
+        if (Accion.Equals("HacerRedirect")) {
+            HttpContext.Current.Response.Redirect("Bandeja_Ordenes.aspx");
+        }
+    }
+    public static string GetPuesto() {
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(HttpContext.Current.Request.QueryString["pto"]);
+        return Puesto;
+    }
+    public static string GetNoOrden() {
+        Utilidades Util = new Utilidades();
+        string NoOrden = Util.ObtenerValorVariable(HttpContext.Current.Request.QueryString["ord"]);
+        return NoOrden;
+    }    
+
+    [WebMethod()]
+    public static List<Dictionary<string, object>> GetServiciosCIEX(string Pto, string Ord) {
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
+        return Util.GetDataTblOrdenMAGDet(Puesto, NoOrden);
+    }
+
+    [WebMethod()]
+    public static string AccionBandejaCIEX(string Pto, string Ord)
+    {
+        if (Pto.ToLower().Equals("false") && Ord.ToLower().Equals("false")) {
+            return "ProcesoNormal";
+        }
+        Utilidades Util = new Utilidades();
+        string Puesto = Util.ObtenerValorVariable(Pto);
+        string NoOrden = Util.ObtenerValorVariable(Ord);
+        return Util.Acciones(Puesto, NoOrden);
+    }
+
+    [WebMethod()]
+    public static string Prueba(object Arr) {
+        JavaScriptSerializer obj = new JavaScriptSerializer();
+        Pojo PObject = obj.ConvertToType<Pojo>(Arr);
+        return PObject.Encabezado.Nombre;
+    }
+
+    [WebMethod()]
+    public static string GuardarCIEX(object Arr)
+    {        
+        Utilidades Util = new Utilidades();
+        return Util.GuardarOrdenCIEX(Arr);
+    }
+
 }
+public class Pojo {
+    public Encabezado Encabezado;
+}
+
+public class Encabezado {
+    public string Nombre;
+}
+
+//public class Servicio{
+//    public Enca Enca;
+//    public List<DetalleServicio> Detalle;
+//}
+
+//public class Enca {
+//    public string Puesto;
+//}
+
+//public class DetalleServicio {
+//    public string Servicio;
+//    public string Cantidad;
+//    public string US;
+//    public string Local;
+//    public string Total;
+//    public string PlaguicidaN;
+//    public string Plaguicida;
+//    public string IdServicio;
+//    public string IdPlaguicida;
+//    public string SubTotal;
+//    public string Dosis;
+//    public string IdDosis;
+//    public string Producto;
+//    public string Ruta;
+//    public string TipoAvion;
+//    public string Procedencia;
+//    public string Destino;
+//    public string NVuelo;
+//    public string TiempoExposicion;
+//    public string UTiempo;
+//    public string Matricula;
+//    public string Razon;
+//    public string LugarTra;
+//    public string Origen;
+//    public string IdPais;
+//    public string UTiempoD;
+//    public string Cantidadcubicad;
+//    public string Temperatura;
+//    public string Tiempoaereacion;
+//    public string UtAereacion;
+//    public string Densidad;
+//    public string Teorico;
+//    public string CantVol;
+//    public string UC;
+//    public string Contenedor;
+//    public string Silo;
+//    public string Concentracion;
+//    public string Real;
+//}

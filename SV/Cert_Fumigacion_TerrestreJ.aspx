@@ -1,7 +1,7 @@
-<%@ Page Language="C#" MasterPageFile="~/Sitc_sv.master" AutoEventWireup="false" CodeFile="Cert_Fumigacion_MaritimaJ.aspx.cs" Inherits="Cert_Fumigacion_MaritimaJ" Title="OIRSA - SITC" %>
+<%@ Page Language="C#" EnableEventValidation="false" MasterPageFile="~/Sitc_sv.master" AutoEventWireup="true" CodeFile="Cert_Fumigacion_TerrestreJ.aspx.cs" Inherits="Cert_Fumigacion_TerrestreJ" Title="OIRSA - SITC" %>
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="SampleContent" Runat="Server">
-<link rel="stylesheet" href="<%= Page.ResolveUrl("~/css/Jquery/base/jquery.ui.all.css")%>"/>
+     <link rel="stylesheet" href="<%= Page.ResolveUrl("~/css/Jquery/base/jquery.ui.all.css")%>"/>
     <link href="../css/jqgrid/ui.jqgrid.css" rel="stylesheet" type="text/css" />
     <script src="<%= Page.ResolveUrl("~/JS/Personalizados/JQuery/custom/jquery-1.10.2.js")%>"></script>
     <script src="<%= Page.ResolveUrl("~/JS/Personalizados/JQuery/custom/jquery-ui-1.10.4.custom.min.js") %>"></script>
@@ -14,9 +14,9 @@
     
     <script src="<%= Page.ResolveUrl("~/JS/Personalizados/jquery.autoNumeric.js") %>"></script>
     <script src="<%= Page.ResolveUrl("~/JS/Personalizados/UploadV2.js") %>"></script>
-    
-    <script src="<%= Page.ResolveUrl("~/JS/Core/FumigacionM.SV.js") + "?id=" + DateTime.Now.ToString() %>"></script>
-    
+    <script src="<%= Page.ResolveUrl("~/JS/Core/formasPago.js") %>"></script>
+    <script src="<%= Page.ResolveUrl("~/JS/Core/Fumigacion.SV.js") + "?id=" + DateTime.Now.ToString() %>"></script>
+    <script src="<%= Page.ResolveUrl("~/JS/Core/Fumigacion.SV.CIEX.js") %>"></script>
     <script type='text/javascript'>
         function cancelClick() {
             var label = $get('ctl00_SampleContent_Label1');
@@ -45,13 +45,15 @@
         updateTime();
         window.setInterval(updateTime, 1000);
     </script>
+      <asp:HiddenField  id="hdTipo" runat="server" />
+
     <div align="center">
         <table width="100%" border="0">
             <tr>
                 <td colspan="2">
                     <table width="100%" border="0">
                         <tr>
-                            <td valign="top" align="left"><div class="demoheading">FUMIGACIÓN MARITIMA</div></td>
+                            <td valign="top" align="left"><div class="demoheading" id="dvTitle">FUMIGACIÓN TERRESTRE</div></td>
                             <td align="right">
                                 <asp:Panel ID="n_certificado" runat="server" Width="200px" BackColor="White" ForeColor="DarkBlue" BorderWidth="2" BorderStyle="solid" BorderColor="DarkBlue" style="z-index: 1;">
                                     <div style="width: 100%; height: 100%; vertical-align:middle; text-align: center;" align="right">
@@ -126,7 +128,7 @@
                 <td align="left">Cortesía</td>
                 <td align="left" style="width: 545px"><asp:CheckBox ID="cb_cortesia" runat="server" /></td>
             </tr>
-            <tr runat="server" >
+            <tr runat="server" visible="true">
                 <td align="left">Local</td>
                 <td align="left" style="width: 545px"><asp:CheckBox ID="cb_local" runat="server" Checked="true" Enabled="False" AutoPostBack="false" OnCheckedChanged="cb_local_CheckedChanged" /></td>
             </tr>
@@ -140,9 +142,18 @@
             <tr>
                 <td align="left"><asp:Label ID="l_cliente" runat="server" Text="Cliente de Crédito"></asp:Label></td>
                 <td align="left" style="width: 545px">
-                    <asp:DropDownList ID="ddl_cliente" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddl_cliente_SelectedIndexChanged" />&nbsp;
+                    <asp:DropDownList ID="ddl_cliente" runat="server" AutoPostBack="false" OnSelectedIndexChanged="ddl_cliente_SelectedIndexChanged" />&nbsp;
+                    <a href="javascript:void();" id="lkDetalleCliente">Pendiente de pago</a>
                     <ajaxToolkit:ListSearchExtender ID="lse_cliente" runat="server" TargetControlID="ddl_cliente" PromptCssClass="ListSearchExtenderPrompt"></ajaxToolkit:ListSearchExtender><br />
-                    <asp:CheckBox ID="cb_cliente_contado" runat="server" AutoPostBack="True" OnCheckedChanged="cb_cliente_contado_CheckedChanged" Text=" Contado" />&nbsp;
+                    <div style="display:none">
+                        <asp:CheckBox ID="cb_cliente_contado" runat="server" AutoPostBack="True" OnCheckedChanged="cb_cliente_contado_CheckedChanged" Text=" Contado" />&nbsp;
+                    </div>
+                    <select id="lsFormasPago">
+                        <option value="1">Credito</option>
+                        <option value="0">Contado</option>
+                        <option value="-1">Tarjeta de credito</option>                        
+                    </select>
+
                 </td>
            </tr>
            <tr>
@@ -155,8 +166,10 @@
            <tr>
                 <td>&nbsp;</td>
                 <td align="left" style="width: 545px">
-                    <asp:LinkButton ID="btnInfo" runat="server" OnClientClick="return false;" Font-Size="X-Small">&laquo; Información Cliente &raquo;</asp:LinkButton>
-                    <div id="flyout" style="display: none; overflow: hidden; z-index: 2; background-color: #FFFFFF; border: solid 1px #D0D0D0;"></div>
+                    
+                    <div id="flyout" style="display: none; overflow: hidden; z-index: 2; background-color: #FFFFFF; border: solid 1px #D0D0D0;">
+                        <asp:LinkButton ID="btnInfo" runat="server" OnClientClick="return false;" Font-Size="X-Small">&laquo; Información Cliente &raquo;</asp:LinkButton>
+                    </div>
                     <div id="info" style="display: none; width: 250px; z-index: 2; opacity: 0; filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0); font-size: 12px; border: solid 1px #CCCCCC; background-color: #FFFFFF; padding: 5px;">
                         <div id="btnCloseParent" style="float: right; opacity: 0; filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);">
                             <asp:LinkButton id="btnClose" runat="server" OnClientClick="return false;" Text="X" ToolTip="Close"
@@ -257,28 +270,43 @@
                     <ajaxToolkit:HoverMenuExtender ID="hm1" runat="server" TargetControlID="lnkClose" PopupControlID="xmlClose" PopupPosition="Bottom" />
                 </td>
             </tr>
-            <tr>
-                <td align="left">No. Viaje</td>
+            <tr  id="trNPlaca">
+                <td align="left" >No. Placa</td>
                 <td align="left" style="width: 545px">
-                    <asp:TextBox runat="server" ID="tb_nviaje" Width="150px" />
-                    <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_nviajes" runat="server" TargetControlID="tb_nviaje" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
+                    <asp:TextBox runat="server" ID="tb_nplaca" Width="80px" />
+                    <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_nplaca" runat="server" TargetControlID="tb_nplaca" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
                 </td>
             </tr>
-            <tr>
+            <tr id="trnViaje">
+                <td align="left">No. Viaje</td>
+                <td align="left" style="width: 473px">
+                    <asp:TextBox runat="server" ID="tb_nviaje" Width="80px" />
+                    <ajaxToolkit:FilteredTextBoxExtender ID="FilteredTextBoxExtender3" runat="server" TargetControlID="tb_nviaje" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
+                </td>
+            </tr>
+            <tr id="trnVapor">
                 <td align="left">Nombre Vapor</td>
-                <td align="left" style="width: 545px">
+                <td align="left">
                     <asp:TextBox runat="server" ID="tb_nvapor" Width="250px" MaxLength="50" />
                     <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_nvapor" runat="server" TargetControlID="tb_nvapor" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
                 </td>
             </tr>
-            <tr>
+            <tr id="trFechaAtraque">
                 <td align="left">Fecha Atraque</td>
-                <td align="left" style="width: 545px">
+                <td align="left">
                     <asp:TextBox runat="server" ID="tb_fecha_atraque" Width="70px" />
                     <asp:ImageButton runat="Server" ID="ib_fecha_atraque" ImageUrl="~/images/Calendar_scheduleHS.png" AlternateText="Click to show calendar" /><br />
                     <ajaxToolkit:MaskedEditExtender ID="mee_fecha_atraque" runat="server" TargetControlID="tb_fecha_atraque" Mask="99/99/9999" MessageValidatorTip="true" CultureName="en-US" OnFocusCssClass="MaskedEditFocus" OnInvalidCssClass="MaskedEditError" MaskType="Date" DisplayMoney="Left" AcceptNegative="Left" ErrorTooltipEnabled="True" />
                     <ajaxToolkit:MaskedEditValidator ID="mev_fecha_atraque" runat="server" ControlExtender="mee_fecha_atraque" ControlToValidate="tb_fecha_atraque" EmptyValueMessage="Fecha de Atraque es Requerida" InvalidValueMessage="Fecha de Atraque Invalida" Display="Dynamic" TooltipMessage="Ingresar Fecha de Atraque" EmptyValueBlurredText="*" InvalidValueBlurredMessage="Formato de fecha Invalida [mm/dd/aaaa]" />
                     <ajaxToolkit:CalendarExtender ID="ce_fecha_atraque" runat="server" TargetControlID="tb_fecha_atraque" PopupButtonID="ib_fecha_atraque" />
+                </td>
+            </tr>
+            <tr id="trHoraAtraque">
+                <td style="width:150px; background-color:#EFEFEF" align="left">Hora Atraque</td>
+                <td align="left">
+                    <asp:TextBox runat="server" ID="tb_hora_atraque" Width="80px" Height="16px" ValidationGroup="Calcular" />
+                    <ajaxToolkit:MaskedEditExtender ID="mee_hora_atraque" runat="server" TargetControlID="tb_hora_atraque" Mask="99:99:99" MessageValidatorTip="true" OnFocusCssClass="MaskedEditFocus" OnInvalidCssClass="MaskedEditError" MaskType="Time" AcceptAMPM="True" ErrorTooltipEnabled="True" />
+                    <ajaxToolkit:MaskedEditValidator ID="mev_hora_atraque" runat="server" ControlExtender="mee_hora_atraque" ControlToValidate="tb_hora_atraque" IsValidEmpty="False" EmptyValueMessage="Hora es requerida" InvalidValueMessage="Hora invalida" Display="Dynamic" TooltipMessage="Ingresar hora" EmptyValueBlurredText="*" InvalidValueBlurredMessage="*" />
                 </td>
             </tr>
             <tr>
@@ -290,11 +318,13 @@
         </table><br />
     </div>
     <div class="demoarea">
+        <table id="dataGrid" style="text-align: center;"></table>
+        <div id="pagingGrid"></div>
         <div class="heading">Detalle del Servicio Aplicado</div>
         <table width="95%">
             <tr>
                 <td style="width:150px">Servicio</td>
-                <td><asp:DropDownList ID="ddl_servicio" runat="server" AutoPostBack="false" OnSelectedIndexChanged="ddl_servicio_SelectedIndexChanged" /></td>
+                <td><asp:DropDownList ID="ddl_servicio" runat="server" AutoPostBack="False" OnSelectedIndexChanged="ddl_servicio_SelectedIndexChanged" /></td>
             </tr>
             <tr>
                 <td>Cantidad</td>
@@ -324,20 +354,20 @@
                 <td><asp:DropDownList ID="ddl_unidad_dosis" runat="server" AutoPostBack="false" OnSelectedIndexChanged="ddl_unidad_dosis_SelectedIndexChanged" /></td>
             </tr>
             <tr>
-                <td>Valor Dosis</td>
-                <td>
-                    <asp:TextBox runat="server" ID="tb_dosis" Width="100px" ReadOnly="true" />
-                    <asp:RequiredFieldValidator runat="server" ID="rfv_dosis" ControlToValidate="tb_dosis" Display="None" ErrorMessage="<b>Dosis es requerida.</b>" ValidationGroup="Certificado_Detalle" />
-                    <ajaxToolkit:ValidatorCalloutExtender runat="Server" ID="vce_dosis" TargetControlID="rfv_dosis" HighlightCssClass="validatorCalloutHighlight" Width="250px" />
-                </td>
-            </tr>
-            <tr>
                 <td>
                     Humedad Relativa</td>
                 <td>
                     <asp:TextBox runat="server" ID="tb_humedad_relativa" Width="50px" />                                        
                     <ajaxToolkit:FilteredTextBoxExtender ID="FilteredTextBoxExtender2" runat="server" TargetControlID="tb_humedad_relativa"
                         FilterType="Custom, Numbers" ValidChars="." />
+                </td>
+            </tr>
+            <tr>
+                <td>Valor Dosis</td>
+                <td>
+                    <asp:TextBox runat="server" ID="tb_dosis" Width="100px" ReadOnly="true" />
+                    <asp:RequiredFieldValidator runat="server" ID="rfv_dosis" ControlToValidate="tb_dosis" Display="None" ErrorMessage="<b>Dosis es requerida.</b>" ValidationGroup="Certificado_Detalle" />
+                    <ajaxToolkit:ValidatorCalloutExtender runat="Server" ID="vce_dosis" TargetControlID="rfv_dosis" HighlightCssClass="validatorCalloutHighlight" Width="250px" />
                 </td>
             </tr>
             <tr>
@@ -361,7 +391,7 @@
             <tr>
                 <td>Cantidad de Producto</td>
                 <td>
-                    <asp:TextBox runat="server" ID="tb_peso_producto" Width="70px" Text="0" /><asp:DropDownList ID="ddl_peso_producto" runat="server" />
+                    <asp:TextBox runat="server" ID="tb_peso_producto" Width="70px" Text="0" AutoPostBack="false" OnTextChanged="tb_peso_producto_TextChanged"  /><asp:DropDownList ID="ddl_peso_producto" runat="server" />
                     <asp:RequiredFieldValidator runat="server" ID="rfv_peso_producto" ControlToValidate="tb_peso_producto" Display="None" ErrorMessage="<b>Peso del Producto es requerido.</b>" ValidationGroup="Certificado_Detalle" />
                     <ajaxToolkit:ValidatorCalloutExtender runat="Server" ID="vce_peso_producto" TargetControlID="rfv_peso_producto" HighlightCssClass="validatorCalloutHighlight" Width="250px" />
                     <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_peso_producto" runat="server" TargetControlID="tb_peso_producto" FilterType="Custom, Numbers" ValidChars="." />
@@ -373,9 +403,11 @@
                 <td>
                     <asp:DropDownList ID="ddl_tipo" runat="server" AutoPostBack="false" OnSelectedIndexChanged="ddl_tipo_SelectedIndexChanged" />&nbsp;
                     <asp:TextBox ID="tb_tipo" runat="server" Visible="false" Text="0"></asp:TextBox>
-                    <asp:Label ID="l_contenedor" runat="server" Text="Especificar contenedor" Visible="false"></asp:Label>
-                    <asp:TextBox ID="tb_contenedor" runat="server" Visible="false" Text=""></asp:TextBox>
-                    <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_contenedor" runat="server" TargetControlID="tb_contenedor" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
+                   <div id="dvContendor" style="display:none;"> 
+                        <asp:Label ID="l_contenedor" runat="server" Text="Especificar contenedor" Visible="true"></asp:Label>
+                        <asp:TextBox ID="tb_contenedor" runat="server"  Text=""></asp:TextBox>
+                        <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_contenedor" runat="server" TargetControlID="tb_contenedor" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
+                    </div>
                 </td>
             </tr>
             
@@ -405,7 +437,7 @@
             <tr>
                 <td>Desviación</td>
                 <td>
-                    <asp:TextBox runat="server" ID="tb_desviacion" Text="0" Width="70px" AutoPostBack="False" ReadOnly="true"/>
+                    <asp:TextBox runat="server" ID="tb_desviacion" Text="0" Width="70px" AutoPostBack="false" ReadOnly="true"/>
                     <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_desviacion" runat="server" TargetControlID="tb_desviacion" FilterType="Custom, Numbers" ValidChars="." />
                 </td>
             </tr>
@@ -479,13 +511,13 @@
             </tr>
         </table><br />
         <table width="95%">
-            <tr>
+        <tr>
                 <td>
                     <div>
                         <table id="jqAtomizacion"></table>
                         <div id="dvpager"></div>
                     </div>
-                </td>
+                </td> 
             </tr>
             <tr>
                 <td>
@@ -546,14 +578,13 @@
                 <td style="height: 26px">
                     <asp:TextBox runat="server" ID="tb_recargo" Width="70px" Text="0" ReadOnly="false" />&nbsp;
                     <div style="display:none;">
-                        <asp:CheckBox runat="server" ID="cb_recargo" AutoPostBack="true" Text="(25%)" OnCheckedChanged="cb_recargo_CheckedChanged" />
+                        <asp:CheckBox runat="server" ID="cb_recargo" AutoPostBack="true" Text="(25%)" OnCheckedChanged="cb_recargo_CheckedChanged"  />
                     </div>
                 </td>
             </tr>
             <tr style="display:none">
                 <td style="background-color:#EFEFEF">Impuesto</td>
-                <td><asp:TextBox runat="server" ID="tb_impuesto" Width="70px" Text="0" ReadOnly="True" />
-                </td>
+                <td><asp:TextBox runat="server" ID="tb_impuesto" Width="70px" Text="0" ReadOnly="True" /></td>
             </tr>
             <tr>
                 <td style="background-color:#EFEFEF">Total</td>
@@ -603,18 +634,18 @@
             <tr><td colspan="2">&nbsp;</td></tr>
             <tr>
                 <td colspan="2" align="center">
-                    <div style="display:none;"> 
-                        <asp:Button ID="b_grabar" runat="server" Text=" Grabar Certificado " BorderColor="AppWorkspace" Height="40px" OnClick="b_grabar_Click" />
-                        <ajaxToolkit:ConfirmButtonExtender ID="cfe_grabar" runat="server" TargetControlID="b_grabar" ConfirmText="Certificado No. 0000012 Emitido al Cliente: TACA. &#10; Desea Continuar?" OnClientCancel="cancelClick" ConfirmOnFormSubmit="true" /><br />
-                        <asp:Label ID="Label1" runat="server" Visible="true" />
-                    </div>
+                   <div style="display:none;"> 
+                    <asp:Button ID="b_grabar" runat="server" Text=" Grabar Certificado " BorderColor="AppWorkspace" Height="40px" OnClick="b_grabar_Click" />
+                    <ajaxToolkit:ConfirmButtonExtender ID="cfe_grabar" runat="server" TargetControlID="b_grabar" ConfirmText="" OnClientCancel="cancelClick" ConfirmOnFormSubmit="true" /><br />
+                    <asp:Label ID="Label1" runat="server" Visible="true" />
+                   </div>
                    <input type="button" id="btGuardar" value=" Grabar Certificado " style="height:40px;" />
+                   <input type="button" id="btGuardarCIEX" value=" Grabar Certificado CIEX" style="height:40px; display:none" />
                 </td>
             </tr>
         </table>
     </div>
-    
-     <div id="dvRecargo" title="Recargo por cosumo" style="display:none;">
+    <div id="dvRecargo" title="Recargo por cosumo" style="display:none;">
     <input type="hidden" id="prcuniS" />
         <fieldset>
             <legend>
@@ -645,6 +676,70 @@
             </table>
         </fieldset>
     </div>
-    
-</asp:Content>
 
+
+
+    <div id="dvSaldoCliente" title="Informacion del cliente" style="display:none;">
+    
+        <fieldset>
+            <legend>
+                Saldo pendiente de pago.
+            </legend>
+            <table>
+                <tr>
+                    <td><label>Total de constancias pendientes:</label></td>
+                    <td><label id="lbCantidadConstancias"></label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Saldo pendiente de pago:</label>
+                    </td>
+                    <td>
+                        <label id="lbSaldoPendiente"></label>
+                    </td>
+                </tr>                
+            </table>
+        </fieldset>
+    </div>
+
+
+
+    <div id="dvConfirmacionPago" title="Confirmación de pago" style="display:none;">
+    
+        <fieldset>
+            <legend>
+                ¿Confirma que desea imprimir esta constancia?
+            </legend>
+            <table>
+                <tr>
+                    <td><label>Constancia No.:</label></td>
+                    <td><label id="lbNConstancia"></label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Cliente:</label>
+                    </td>
+                    <td>
+                        <label id="lbNombreCliente"></label>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>
+                        <label>Monto:</label>
+                    </td>
+                    <td>
+                        <label id="lbTotalConstancia"></label>
+                    </td>
+                </tr>                
+                <tr id="trAutorizacionTarjeta">
+                    <td>
+                        <label>Numero autorizacion pago:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="txtAutorizaTarjeta"/>
+                    </td>
+                </tr>                
+            </table>
+        </fieldset>
+    </div>
+</asp:Content>
