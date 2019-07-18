@@ -71,8 +71,9 @@ function cargarGrid() {
 function goTratamiento(objeto) {
     var aspxPage = "";
     var tipoTratamiento = objeto.Tratamiento;
+    //alert(tipoTratamiento);
     
-    switch (tipoTratamiento.toUpperCase()) {
+    switch (tipoTratamiento.toUpperCase().trim()) {
         case "ASPERSION MARITIMA":
             aspxPage = "Cert_Aspersion_TerrestreJ.aspx?select=0&tp=M";
             break;
@@ -87,9 +88,13 @@ function goTratamiento(objeto) {
             break;
         case "NEBULIZACION MARITIMA":
             aspxPage = "Cert_Nebulizacion_Terrestre.aspx?select=0&tp=M";
+            objeto.PuestoEncryp = replaceAll(objeto.PuestoEncryp, "/", "_");
+            objeto.NoOrdenEncryp = replaceAll(objeto.NoOrdenEncryp, "/", "_");
             break;
         case "NEBULIZACION TERRESTRE":
             aspxPage = "Cert_Nebulizacion_Terrestre.aspx?select=0";
+            objeto.PuestoEncryp = replaceAll(objeto.PuestoEncryp, "/", "_");
+            objeto.NoOrdenEncryp = replaceAll(objeto.NoOrdenEncryp, "/", "_");
             break;
         default:
             aspxPage = "";
@@ -97,10 +102,15 @@ function goTratamiento(objeto) {
     }
     if (aspxPage != "") {
         window.location.href = aspxPage + "&pto=" + objeto.PuestoEncryp + "&ord=" + objeto.NoOrdenEncryp;
+        //alert("redir: " + aspxPage + "&pto=" + objeto.PuestoEncryp + "&ord=" + objeto.NoOrdenEncryp);
         mensajeDeSalidaPagina();
     } else {
         mensajeErrorDialog("El tipo de tratamiento no es valido.");
     }
+}
+
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }
 
 function mensajeDeSalidaPagina() {
