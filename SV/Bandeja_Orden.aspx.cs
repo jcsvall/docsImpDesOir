@@ -145,6 +145,13 @@ public partial class Bandeja_Orden : System.Web.UI.Page
         return Util.GuardarOrdenCIEX(Arr);
     }
 
+    [WebMethod()]
+    public static string ObtenerOrdenMAG(string Ord)
+    {
+        Utilidades Util = new Utilidades();
+        return Util.ObtenerValorVariable(Ord);
+    }
+
 }
 
 public class Pojo

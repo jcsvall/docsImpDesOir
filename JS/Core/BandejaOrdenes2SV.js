@@ -62,7 +62,7 @@ function cargarGrid() {
                 jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
             }	
         },
-        caption: "Bandeja de ordenes CIEX"
+        caption: "Bandeja de ordenes MAG"
     });//.jqGrid("filterToolbar");
     jQuery("#dataGrid").jqGrid('navGrid', '#pagingGrid', { search: false, edit: false, add: false, del: false });
 }

@@ -108,7 +108,7 @@ public class Utilidades
         DataTable dt = new DataTable();
         List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
         SqlConnection Conn = fn.ConnectionSql();       
-        String Select = "SELECT Cantidad,QuimicoOirsaDescripcion,DosisOirsaDescripcion,CONVERT(VARCHAR, Tiempo)+' '+UnidadTiempo Tiempo,UnidadTiempo,Origen,Destino,Procedencia,producto,ListaProductosOrigen,Estado ";
+        String Select = "SELECT Cantidad,QuimicoOirsaDescripcion,DosisOirsaDescripcion,CONVERT(VARCHAR, Tiempo)+' '+UnidadTiempo Tiempo,UnidadTiempo,Origen,Destino,Procedencia,producto,ListaProductosOrigen ";
         String sQuery = Select+ " FROM tblOrdenMAGDetalle WHERE PuestoFk='"+ Puesto + "' AND NoOrdenMAGFk='"+ NoOrden + "'";        
         SqlCommand cmSQL = new SqlCommand(sQuery, Conn);
         SqlDataAdapter da = new SqlDataAdapter(cmSQL);

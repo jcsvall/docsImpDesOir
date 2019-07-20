@@ -139,7 +139,7 @@ public partial class Cliente_Documento : System.Web.UI.Page
         }
         else
         {
-            String queryAdd = "insert into tblClienteDocumento values('"+ Puesto + "','"+ Cliente + "','"+ IdPais + "','"+Dui+"','"+Nit+"','"+Pasaporte+"')";            
+            String queryAdd = "insert into tblClienteDocumento(puesto,cliente,idPais,dui,nit,pasaporte) values('"+ Puesto + "','"+ Cliente + "','"+ IdPais + "','"+Dui+"','"+Nit+"','"+Pasaporte+"')";            
             fn.EjecutarNonQuery(queryAdd, Conn);
         }
 

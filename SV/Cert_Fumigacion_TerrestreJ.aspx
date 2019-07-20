@@ -54,14 +54,14 @@
                     <table width="100%" border="0">
                         <tr>
                             <td valign="top" align="left"><div class="demoheading" id="dvTitle">FUMIGACIÓN TERRESTRE</div></td>
-                            <td align="right">
+                            <td align="right" style="display:none">
                                 <asp:Panel ID="n_certificado" runat="server" Width="200px" BackColor="White" ForeColor="DarkBlue" BorderWidth="2" BorderStyle="solid" BorderColor="DarkBlue" style="z-index: 1;">
                                     <div style="width: 100%; height: 100%; vertical-align:middle; text-align: center;" align="right">
                                         <p>Certificado No:</p>
                                         <asp:Label ID="l_n_certificado" runat="server" Text="325658" Font-Size="Large" Font-Bold="true"></asp:Label>
                                     </div>
                                 </asp:Panel>    
-                                <div style="width:230px;height:20px">
+                                <div style="width:230px;height:20px;">
                                     <asp:Panel ID="timer" runat="server" Width="120px" BackColor="White" ForeColor="DarkBlue" BorderWidth="1" BorderStyle="solid" BorderColor="DarkBlue" style="z-index: 1;">
                                         <span id="currentTime" runat="server" style="font-size:large;font-weight:bold;line-height:30px;"/>
                                         <ajaxToolkit:AlwaysVisibleControlExtender ID="avce" runat="server" TargetControlID="timer" VerticalSide="Top" VerticalOffset="10" HorizontalSide="Right" HorizontalOffset="10" ScrollEffectDuration=".1" />
@@ -640,7 +640,7 @@
                     <asp:Label ID="Label1" runat="server" Visible="true" />
                    </div>
                    <input type="button" id="btGuardar" value=" Grabar Certificado " style="height:40px;" />
-                   <input type="button" id="btGuardarCIEX" value=" Grabar Certificado CIEX" style="height:40px; display:none" />
+                   <input type="button" id="btGuardarCIEX" value=" Grabar Orden de pago CIEX" style="height:40px; display:none" />
                 </td>
             </tr>
         </table>
