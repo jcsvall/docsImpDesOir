@@ -210,13 +210,14 @@ public class Utilidades
         Funciones fn = new Funciones();        
         
         SqlCommand Command = new SqlCommand();
-        SqlCommand CommandSelect = new SqlCommand();        
+        SqlCommand CommandSelect = new SqlCommand();
+        //SqlCommand CommandCambiarEstado = new SqlCommand();
         SqlTransaction Transaction;
         SqlConnection Conn = fn.ConnectionSql();
         Servicio.Enca.Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         Servicio.Enca.idpais = HttpContext.Current.Session["idPais"].ToString();
         Servicio.Enca.Responsable = HttpContext.Current.Session["login"].ToString();
-        Servicio.Enca.NordenCIEX = ObtenerValorVariable(Servicio.Enca.NordenCIEX);
+        //Servicio.Enca.NordenCIEX = ObtenerValorVariable(Servicio.Enca.NordenCIEX);
 
         decimal Total = 0;
         List<DetalleServicio> Detalle = Servicio.Detalle;
@@ -235,9 +236,15 @@ public class Utilidades
             CommandSelect.Connection = Conn;
             CommandSelect.Transaction = Transaction;
 
+            //CommandCambiarEstado.Connection = Conn;
+            //CommandCambiarEstado.Transaction = Transaction;
+            GenerarNoOrdenCIEX(Conn, Transaction, Servicio);
+
             int IdEncabezado = GuardarEncabezado(Command, Servicio, CommandSelect);
 
             GuardarDetalle(Conn, Transaction, Servicio, IdEncabezado);
+
+            CambiarEstadoOrdenMAG(Conn, Transaction, Servicio);
 
             Transaction.Commit();
         }
@@ -259,8 +266,8 @@ public class Utilidades
 
     private int GuardarEncabezado(SqlCommand Command, Servicio Servicio, SqlCommand CommandSelect) {
         int response = 0;
-        String queryInsertEncabezado = " insert into tblOrdenPagoCiex( id, Puesto, Cortesia, Local_, Anulado, Remesado, Replicado, NEnd, idPais, Fecha, Cambio, Total, TotalString, Observacion, Responsable, TipoCertificado, TipoCliente, ClienteExtra, Cliente, Vapor, NAduana, Placa, Impuesto, FechaTrat, FechaTrat_Fin, FOrden, FechaAtraque, Credito, NOrden, Estado, AOrden, Cuarentena, IDFactura, NViaje, Ingles) ";
-        queryInsertEncabezado += "VALUES (Next value FOR sq_OrdenPagoCiex,@Puesto,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor,@NAduana,@Placa,@Impuesto,@FechaTrat,@FechaTrat_Fin,@FOrden,@FechaAtraque,@Credito,@NOrden,@Estado,@AOrden,@Cuarentena,@IDFactura,@NViaje,@Ingles)";
+        String queryInsertEncabezado = " insert into tblOrdenPagoCiex( id, Puesto, Cortesia, Local_, Anulado, Remesado, Replicado, NEnd, idPais, Fecha, Cambio, Total, TotalString, Observacion, Responsable, TipoCertificado, TipoCliente, ClienteExtra, Cliente, Vapor, NAduana, Placa, Impuesto, FechaTrat, FechaTrat_Fin, FOrden, FechaAtraque, Credito, NOrden, Estado, AOrden, Cuarentena, IDFactura, NViaje, Ingles, NOrdenCiex) ";
+        queryInsertEncabezado += "VALUES (Next value FOR sq_OrdenPagoCiex,@Puesto,@Cortesia,@Local_,@Anulado,@Remesado,@Replicado,@NEnd,@idPais,@Fecha,@Cambio,@Total,@TotalString,@Observacion,@Responsable,@TipoCertificado,@TipoCliente,@ClienteExtra,@Cliente,@Vapor,@NAduana,@Placa,@Impuesto,@FechaTrat,@FechaTrat_Fin,@FOrden,@FechaAtraque,@Credito,@NOrden,@Estado,@AOrden,@Cuarentena,@IDFactura,@NViaje,@Ingles,@NOrdenCiex)";
         
         Command.CommandText = queryInsertEncabezado;
 
@@ -349,6 +356,7 @@ public class Utilidades
         Command.Parameters["@NViaje"].Value = Servicio.Enca.Nviaje;
         Command.Parameters.Add("@Ingles", SqlDbType.Bit);
         Command.Parameters["@Ingles"].Value = Servicio.Enca.Ingles;
+        Command.Parameters.AddWithValue("@NOrdenCiex", Servicio.Enca.NordenCIEX);
 
         Command.ExecuteNonQuery();
 
@@ -486,6 +494,79 @@ public class Utilidades
             Command.ExecuteNonQuery();            
         }
 
+    }
+
+    private void GenerarNoOrdenCIEX(SqlConnection Conn, SqlTransaction Transaction, Servicio Servicio) {
+        
+        SqlCommand CommandSelect = new SqlCommand();
+        CommandSelect.Connection = Conn;
+        CommandSelect.Transaction = Transaction;
+        String puesto = Servicio.Enca.Puesto;
+        CommandSelect.CommandText = "SELECT count(id)+1 correlativo,(SELECT cod_dga FROM tblPuestoCodDga WHERE puesto='"+ puesto + "') cod_dga FROM tblOrdenPagoCiex WHERE Puesto='"+ puesto + "'";
+        String Correlativo = "";
+        String CodigoDGA = "";
+        SqlDataReader reader = CommandSelect.ExecuteReader();
+        while (reader.Read())
+        {
+            Correlativo = reader["correlativo"].ToString();
+            CodigoDGA = reader["cod_dga"].ToString();
+        }
+        if (Correlativo.Equals("")) {
+            throw new Exception("Error generando el correlativo");
+        }
+        if (CodigoDGA == null)
+        {
+            throw new Exception("No se ha encontrado codigo DGA.");
+        }
+        
+        String Mes = DateTime.Now.Month.ToString();
+        if (Mes.Length == 1) {
+            Mes = "0" + Mes;
+        }
+        String Anio = DateTime.Now.Year.ToString();
+
+        String NoOrdenCiex = Anio + Mes + "-" + FormatoCorrelativo(Correlativo)+ "-" + CodigoDGA;
+        Servicio.Enca.NordenCIEX = NoOrdenCiex;
+
+    }
+
+    private string FormatoCorrelativo(String corr) {
+        string response = "";
+        switch (corr.Length)
+        {
+            case 1:
+                response = "0000" + corr;
+                break;
+            case 2:
+                response = "000" + corr;
+                break;
+            case 3:
+                response = "00" + corr;
+                break;
+            case 4:
+                response = "0" + corr;
+                break;
+            case 5:
+                response = corr;
+                break;
+        }
+        return response;
+    }
+
+    private void CambiarEstadoOrdenMAG(SqlConnection Conn, SqlTransaction Transaction, Servicio Servicio) {
+        SqlCommand CommandUpdate = new SqlCommand();
+        //SqlCommand CommandSelect = new SqlCommand();
+        String estado = "Procesado";
+        CommandUpdate.Connection = Conn;
+        CommandUpdate.Transaction = Transaction;
+        
+        String QueryUpdate = "UPDATE tblOrdenMAG SET Estado = '"+ estado + "' WHERE Puesto='" + Servicio.Enca.Puesto + "' AND NoOrdenMAG = '" + Servicio.Enca.Norden + "'";
+        CommandUpdate.CommandText = QueryUpdate;
+
+        int Update = CommandUpdate.ExecuteNonQuery();
+        if (Update == 0) {            
+            throw new Exception("No se actualizo el estado de la orden MAG Puesto: " + Servicio.Enca.Puesto +" No. Orden: " + Servicio.Enca.Norden);
+        }
     }
 
 }

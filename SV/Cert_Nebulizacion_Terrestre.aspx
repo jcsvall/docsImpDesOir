@@ -515,6 +515,14 @@
                 <td>Encargado Cuarentena</td>
                 <td><asp:DropDownList ID="ddl_cuarentena" runat="server" /></td>
             </tr>
+             <tr id="NoOrden">
+                <td>Número de Orden</td>
+                <td>
+                    <asp:TextBox ID="tb_numero_orden" runat="server" Width="120px"></asp:TextBox>
+                    <ajaxToolkit:FilteredTextBoxExtender ID="ftbe_numero_orden" runat="server" TargetControlID="tb_numero_orden" FilterType="Custom" FilterMode="InvalidChars" InvalidChars="'" />
+                </td>
+            </tr>
+
             <tr><td colspan="2">&nbsp;</td></tr>
             <tr>
                 <td colspan="2" align="center">

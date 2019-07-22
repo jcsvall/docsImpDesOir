@@ -42,7 +42,7 @@ public partial class Bandeja_Orden : System.Web.UI.Page
     {         
         String Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         String sQuery = "";
-        String where = " WHERE Puesto='"+ Puesto + "' ";
+        String where = " WHERE Puesto='"+ Puesto + "' AND UPPER(Estado) = UPPER('Pendiente') ";
         if (!busqueda.Equals(""))
         {
             List<String> EsFechaValida = FechaValida(busqueda);
