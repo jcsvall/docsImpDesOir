@@ -502,23 +502,42 @@ public class Utilidades
         CommandSelect.Connection = Conn;
         CommandSelect.Transaction = Transaction;
         String puesto = Servicio.Enca.Puesto;
-        CommandSelect.CommandText = "SELECT count(id)+1 correlativo,(SELECT cod_dga FROM tblPuestoCodDga WHERE puesto='"+ puesto + "') cod_dga FROM tblOrdenPagoCiex WHERE Puesto='"+ puesto + "'";
+        CommandSelect.CommandText = "SELECT max(id) ultimoRegistro,(SELECT cod_dga FROM tblPuestoCodDga WHERE puesto='" + puesto + "') cod_dga FROM tblOrdenPagoCiex WHERE Puesto='"+ puesto + "'";
         String Correlativo = "";
         String CodigoDGA = "";
+        String UltimoRegistroPagoCiex = "";
         SqlDataReader reader = CommandSelect.ExecuteReader();
         while (reader.Read())
         {
-            Correlativo = reader["correlativo"].ToString();
+            UltimoRegistroPagoCiex = reader["ultimoRegistro"].ToString();
             CodigoDGA = reader["cod_dga"].ToString();
         }
-        if (Correlativo.Equals("")) {
-            throw new Exception("Error generando el correlativo");
-        }
-        if (CodigoDGA == null)
+        
+        if (CodigoDGA == null || "".Equals(CodigoDGA))
         {
             throw new Exception("No se ha encontrado codigo DGA.");
         }
-        
+
+        if (UltimoRegistroPagoCiex != null && !"".Equals(UltimoRegistroPagoCiex))
+        {
+            SqlCommand CommandSelectById = new SqlCommand();
+            CommandSelectById.Connection = Conn;
+            CommandSelectById.Transaction = Transaction;
+            int id = Convert.ToInt32(UltimoRegistroPagoCiex);
+            CommandSelectById.CommandText = "SELECT NOrdenCiex FROM tblOrdenPagoCiex WHERE id = " + id;
+
+            SqlDataReader readerId = CommandSelectById.ExecuteReader();
+
+            while (readerId.Read())
+            {
+                String NoOrdenPagoCiex = readerId["NOrdenCiex"].ToString();
+                Correlativo = (Convert.ToInt32(NoOrdenPagoCiex.Split('-')[1]) + 1).ToString();
+            }
+        } else {
+            Correlativo = "1";
+        }
+
+
         String Mes = DateTime.Now.Month.ToString();
         if (Mes.Length == 1) {
             Mes = "0" + Mes;
