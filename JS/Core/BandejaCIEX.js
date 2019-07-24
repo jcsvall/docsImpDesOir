@@ -54,7 +54,7 @@ function cargarGrid() {
             return JSON.stringify(postData);
         },
         ajaxGridOptions: { contentType: "application/json" },       
-        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Estado', 'Fecha-Hora Pago','Id', 'Acci&oacute;n'],
+        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Valor','Estado', 'Fecha-Hora Pago','Comprobante','Id', 'Acci&oacute;n'],
         colModel: [            
             { name: 'Fecha', index: 'Fecha', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
             { name: 'NOrdenCiex', index: 'NOrdenCiex', width: 120 },
@@ -62,9 +62,11 @@ function cargarGrid() {
             { name: 'cliente', index: 'cliente', width: 170, align: "center" },
             { name: 'responsableMag', index: 'responsableMag', width: 120, align: "center" },
             { name: 'PlacaVapor', index: 'PlacaVapor', width: 80, align: "center" },
+            { name: 'Total', index: 'Total', width: 90, align: "center", formatter: 'currency', formatoptions: { prefix: '($', suffix: ')', thousandsSeparator: ',' } },
             { name: 'Estado', index: 'Estado', width: 90, align: "center" },
             { name: 'fechaHoraPago', index: 'fechaHoraPago', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
-            { name: 'id', index: 'id', width: 80,hidden:true },
+            { name: 'NCompranteCiex', index: 'NCompranteCiex', width: 90, align: "center" },
+            { name: 'id', index: 'id', width: 80, hidden: true },
             { name: 'act', index: 'act', width: 70, sortable: false, align: "center" },
         ],
         rowNum: 10,
@@ -97,7 +99,7 @@ function cargarGrid() {
 
 function generarCertificado(objeto) {    
     var NOrden = objeto.NOrdenCiex;
-    alert(NOrden + " Id: " + objeto.id);
+    alert(NOrden + " Id: " + objeto.id + " Valor: " + objeto.Total);
 }
 
 function replaceAll(str, find, replace) {
