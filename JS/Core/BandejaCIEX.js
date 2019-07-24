@@ -79,10 +79,14 @@ function cargarGrid() {
             for(var i=0;i < ids.length;i++){
                 var cl = ids[i];                                
                 var rowSelected = jQuery("#dataGrid").jqGrid('getRowData', cl);                
-                if (rowSelected.Estado.trim().toUpperCase() == 'PENDIENTE') {
+                if (rowSelected.Estado.trim().toUpperCase() == 'PAGADO') {
+                    //be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
+                    //jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
                     be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
-                    jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
+                }else{
+                    be = "<button type='button' class='btn btn-primary btn-sm' disabled><span class='oi oi-file' style='font-size:90%' title='No valido para esta opci&oacute;n'></span></button> ";
                 }
+                jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
             }	
         },
         caption: "Bandeja de ordenes CIEX"
