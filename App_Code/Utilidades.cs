@@ -189,6 +189,45 @@ public class Utilidades
         return rows;
     }
 
+    public Dictionary<string, object> GetDataToGQGridWithPagination(String Query, int Page, int TotalRegistros, int Limit)
+    {
+        Funciones fn = new Funciones();
+        DataTable dt = new DataTable();
+        Dictionary<string, object> rows = new Dictionary<string, object>();
+        List<Dictionary<string, object>> rows2 = new List<Dictionary<string, object>>();
+        SqlConnection Conn = fn.ConnectionSql();
+        SqlCommand cmSQL = new SqlCommand(Query, Conn);
+        SqlDataAdapter da = new SqlDataAdapter(cmSQL);
+        da.Fill(dt);
+
+        Dictionary<string, object> row;
+
+        foreach (DataRow dr in dt.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);
+            }
+            rows2.Add(row);
+        }
+        Conn.Close();
+
+        row = new Dictionary<string, object>();
+
+        double TotalPag = ((double)TotalRegistros / (double)Limit);
+        int TotalPaginas = Convert.ToInt32(Math.Ceiling((TotalPag)));
+
+        if (Page > TotalPaginas) Page = TotalPaginas;
+
+        row.Add("records", TotalRegistros);
+        row.Add("page", Page);
+        row.Add("total", TotalPaginas);
+        row.Add("rows", rows2);
+
+        return row;
+    }
+
     public string GuardarOrdenCIEX(object Objeto) {
         JavaScriptSerializer obj = new JavaScriptSerializer();
         Servicio Servicio = obj.ConvertToType<Servicio>(Objeto);
@@ -587,7 +626,7 @@ public class Utilidades
             throw new Exception("No se actualizo el estado de la orden MAG Puesto: " + Servicio.Enca.Puesto +" No. Orden: " + Servicio.Enca.Norden);
         }
     }
-
+    
 }
 
 

@@ -30,13 +30,33 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
     }
 
     [WebMethod()]
-    public static List<Dictionary<string, object>> GetBandejaData(string Busqueda,string Estado)
+   // public static List<Dictionary<string, object>> GetBandejaData(string Busqueda,string Estado,int page,int rows)
+    public static Dictionary<string, object> GetBandejaData(string Busqueda, string Estado, int page, int rows,string sidx, string sord)
     {
-        Utilidades Util = new Utilidades();        
-        return Util.GetDataToGQGrid(getQuery(Busqueda, Estado));
+        Utilidades Util = new Utilidades();
+        Funciones fn = new Funciones();
+        int Limit = rows;
+        int Start = (page - 1) * Limit;
+        int totalRegistros = 0;
+
+        String limite = " ORDER BY "+ sidx +" "+ sord +" OFFSET " + Start + " ROWS FETCH NEXT " + Limit + " ROWS ONLY";
+        String QuerySelect = getQuery(Busqueda, Estado,"select") + limite;
+        String QueryCount = getQuery(Busqueda, Estado, "count");
+
+        SqlConnection Conn = fn.ConnectionSql();
+        SqlCommand cmSQL = new SqlCommand(QueryCount, Conn);
+
+        SqlDataReader reader = cmSQL.ExecuteReader();
+        while (reader.Read())
+        {
+            totalRegistros = Convert.ToInt32(reader["totalRegistros"].ToString());
+        }
+        Conn.Close();
+
+        return Util.GetDataToGQGridWithPagination(QuerySelect, page, totalRegistros, Limit);
     }
 
-    public static string getQuery(String busqueda,String Estado)
+    public static string getQuery(String busqueda,String Estado,String tipo)
     {            
         String Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         String sQuery = "";
@@ -44,6 +64,7 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
         if (!Estado.Equals("")) {
             ByEstado = " AND UPPER(tOr.Estado) = UPPER('"+ Estado + "') ";
         }
+        
        // String where = " WHERE tOr.Puesto='" + Puesto + "' AND UPPER(tOr.Estado) = UPPER('Pendiente') AND tOr.idPais = 'SV' ";
         String where = " WHERE tOr.Puesto='" + Puesto + "' AND tOr.idPais = 'SV' "+ ByEstado;
         if (!busqueda.Equals(""))
@@ -62,9 +83,13 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
             }
         }
 
-        //sQuery = "SELECT FechaOrden,NoOrdenMag,OperacionMAG,Tratamiento,Puesto,Cliente,InspectorMAG,Placa+' '+Vapor PlacaVapor,Naturaleza Producto  FROM tblOrdenMAG ";
-        // sQuery = "SELECT Fecha,NOrdenCiex,TipoCertificado,(SELECT Nombre FROM tblCliente WHERE Cliente=tOr.Cliente AND Puesto=tOr.Puesto AND idPais=tOr.idPais) cliente, (SELECT InspectorMAG FROM tblOrdenMAG WHERE Puesto=tOr.Puesto AND NoOrdenMAG=tOr.NOrden) responsableMag,Placa+' '+Vapor PlacaVapor,Estado,fPagoCiex fechaHoraPago FROM tblOrdenPagoCiex tOr ";
-        sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,tOr.Placa+' '+tOr.Vapor PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago,tOr.id ";
+        if (tipo.Equals("select"))
+        {
+            sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,LTRIM(tOr.Placa)+' '+LTRIM(tOr.Vapor) PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago,tOr.id ";
+        }
+        if (tipo.Equals("count")) {
+            sQuery = " SELECT COUNT(tOr.id) totalRegistros ";
+        }
         sQuery += " FROM tblOrdenPagoCiex tOr INNER JOIN tblCliente tbCli ON tOr.Puesto=tbCli.Puesto AND tOr.idPais=tbCli.idPais AND tOr.Cliente=tbCli.Cliente ";
         sQuery += " INNER JOIN tblOrdenMAG tbMag ON tOr.Puesto=tbMag.Puesto AND tOr.NOrden=tbMag.NoOrdenMAG ";
         sQuery += where;
