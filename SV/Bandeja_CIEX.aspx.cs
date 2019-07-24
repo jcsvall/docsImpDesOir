@@ -30,19 +30,22 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
     }
 
     [WebMethod()]
-    public static List<Dictionary<string, object>> GetBandejaData(string Busqueda)
+    public static List<Dictionary<string, object>> GetBandejaData(string Busqueda,string Estado)
     {
-        Utilidades Util = new Utilidades();
-        //String Query = "SELECT FechaOrden,NoOrdenMag,OperacionMAG,Tratamiento,Puesto,Cliente,InspectorMAG,Placa,Vapor,Naturaleza Producto  FROM tblOrdenMAG";
-
-        return Util.GetDataToGQGrid(getQuery(Busqueda));
+        Utilidades Util = new Utilidades();        
+        return Util.GetDataToGQGrid(getQuery(Busqueda, Estado));
     }
 
-    public static string getQuery(String busqueda)
-    {         
+    public static string getQuery(String busqueda,String Estado)
+    {            
         String Puesto = HttpContext.Current.Session["idPuesto"].ToString();
         String sQuery = "";
-        String where = " WHERE tOr.Puesto='" + Puesto + "' AND UPPER(tOr.Estado) = UPPER('Pendiente') AND tOr.idPais = 'SV' ";
+        String ByEstado = "";
+        if (!Estado.Equals("")) {
+            ByEstado = " AND UPPER(tOr.Estado) = UPPER('"+ Estado + "') ";
+        }
+       // String where = " WHERE tOr.Puesto='" + Puesto + "' AND UPPER(tOr.Estado) = UPPER('Pendiente') AND tOr.idPais = 'SV' ";
+        String where = " WHERE tOr.Puesto='" + Puesto + "' AND tOr.idPais = 'SV' "+ ByEstado;
         if (!busqueda.Equals(""))
         {
             List<String> EsFechaValida = FechaValida(busqueda);
@@ -61,7 +64,7 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
 
         //sQuery = "SELECT FechaOrden,NoOrdenMag,OperacionMAG,Tratamiento,Puesto,Cliente,InspectorMAG,Placa+' '+Vapor PlacaVapor,Naturaleza Producto  FROM tblOrdenMAG ";
         // sQuery = "SELECT Fecha,NOrdenCiex,TipoCertificado,(SELECT Nombre FROM tblCliente WHERE Cliente=tOr.Cliente AND Puesto=tOr.Puesto AND idPais=tOr.idPais) cliente, (SELECT InspectorMAG FROM tblOrdenMAG WHERE Puesto=tOr.Puesto AND NoOrdenMAG=tOr.NOrden) responsableMag,Placa+' '+Vapor PlacaVapor,Estado,fPagoCiex fechaHoraPago FROM tblOrdenPagoCiex tOr ";
-        sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,tOr.Placa+' '+tOr.Vapor PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago ";
+        sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,tOr.Placa+' '+tOr.Vapor PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago,tOr.id ";
         sQuery += " FROM tblOrdenPagoCiex tOr INNER JOIN tblCliente tbCli ON tOr.Puesto=tbCli.Puesto AND tOr.idPais=tbCli.idPais AND tOr.Cliente=tbCli.Cliente ";
         sQuery += " INNER JOIN tblOrdenMAG tbMag ON tOr.Puesto=tbMag.Puesto AND tOr.NOrden=tbMag.NoOrdenMAG ";
         sQuery += where;

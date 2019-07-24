@@ -1,4 +1,5 @@
 ﻿var busqueda = "";
+var estado = "";
 var baseURL = "Bandeja_CIEX.aspx";
 $(document).ready(function () {
     init();
@@ -17,6 +18,22 @@ function init() {
             buscarEnGrid();
         }
     });
+    llenarEstados();
+}
+
+function llenarEstados() {
+    var cadena = "<option value='' selected>[Estados]</option>";
+    for (var i = 1; i < 4; i++) {
+        var estado = "Pagado";
+        if (i == 2) {
+            estado = "Pendiente";
+        }
+        if (i == 3) {
+            estado = "Procesado";
+        }
+        cadena += "<option value='" + estado + "'>" + estado + "</option>";
+    }
+    $("#estados").html(cadena);
 }
 
 function cargarGrid() {
@@ -24,7 +41,7 @@ function cargarGrid() {
         url: baseURL+'/GetBandejaData',
         datatype: "json",
         mtype: 'POST',
-        postData: { Busqueda: busqueda},
+        postData: { Busqueda: busqueda, Estado: estado },
         height: 'auto',
         width: '690',
         loadError: function (jqXHR, textStatus, errorThrown) {
@@ -38,7 +55,7 @@ function cargarGrid() {
         },
         ajaxGridOptions: { contentType: "application/json" },
         loadonce: true,
-        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Estado', 'Fecha-Hora Pago', 'Acci&oacute;n'],
+        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Estado', 'Fecha-Hora Pago','Id', 'Acci&oacute;n'],
         colModel: [            
             { name: 'Fecha', index: 'Fecha', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
             { name: 'NOrdenCiex', index: 'NOrdenCiex', width: 120 },
@@ -48,6 +65,7 @@ function cargarGrid() {
             { name: 'PlacaVapor', index: 'PlacaVapor', width: 80, align: "center" },
             { name: 'Estado', index: 'Estado', width: 90, align: "center" },
             { name: 'fechaHoraPago', index: 'fechaHoraPago', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
+            { name: 'id', index: 'id', width: 80,hidden:true },
             { name: 'act', index: 'act', width: 70, sortable: false, align: "center" },
         ],
         rowNum: 10,
@@ -62,8 +80,10 @@ function cargarGrid() {
             for(var i=0;i < ids.length;i++){
                 var cl = ids[i];                                
                 var rowSelected = jQuery("#dataGrid").jqGrid('getRowData', cl);                
-                be = "<button type='button' class='btn btn-primary btn-sm' onClick='goTratamiento(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-folder' style='font-size:90%' title='Abrir'></span></button> ";
-                jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
+                if (rowSelected.Estado.trim().toUpperCase() == 'PENDIENTE') {
+                    be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
+                    jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
+                }
             }	
         },
         caption: "Bandeja de ordenes CIEX"
@@ -72,45 +92,9 @@ function cargarGrid() {
 }
 
 
-function goTratamiento(objeto) {
-    var aspxPage = "";
-    var tipoTratamiento = objeto.Tratamiento;
-    //alert(tipoTratamiento);
-    
-    switch (tipoTratamiento.toUpperCase().trim()) {
-        case "ASPERSION MARITIMA":
-            aspxPage = "Cert_Aspersion_TerrestreJ.aspx?select=0&tp=M";
-            break;
-        case "ASPERSION TERRESTRE":
-            aspxPage = "Cert_Aspersion_TerrestreJ.aspx?select=0";
-            break;
-        case "FUMIGACION MARITIMA":
-            aspxPage = "Cert_Fumigacion_TerrestreJ.aspx?tp=M&select=0";
-            break;
-        case "FUMIGACION TERRESTRE":
-            aspxPage = "Cert_Fumigacion_TerrestreJ.aspx?select=0";
-            break;
-        case "NEBULIZACION MARITIMA":
-            aspxPage = "Cert_Nebulizacion_Terrestre.aspx?select=0&tp=M";
-            objeto.PuestoEncryp = replaceAll(objeto.PuestoEncryp, "/", "_");
-            objeto.NoOrdenEncryp = replaceAll(objeto.NoOrdenEncryp, "/", "_");
-            break;
-        case "NEBULIZACION TERRESTRE":
-            aspxPage = "Cert_Nebulizacion_Terrestre.aspx?select=0";
-            objeto.PuestoEncryp = replaceAll(objeto.PuestoEncryp, "/", "_");
-            objeto.NoOrdenEncryp = replaceAll(objeto.NoOrdenEncryp, "/", "_");
-            break;
-        default:
-            aspxPage = "";
-            break;
-    }
-    if (aspxPage != "") {
-        window.location.href = aspxPage + "&pto=" + objeto.PuestoEncryp + "&ord=" + objeto.NoOrdenEncryp;
-        //alert("redir: " + aspxPage + "&pto=" + objeto.PuestoEncryp + "&ord=" + objeto.NoOrdenEncryp);
-        mensajeDeSalidaPagina();
-    } else {
-        mensajeErrorDialog("El tipo de tratamiento no es valido.");
-    }
+function generarCertificado(objeto) {    
+    var NOrden = objeto.NOrdenCiex;
+    alert(NOrden + " Id: " + objeto.id);
 }
 
 function replaceAll(str, find, replace) {
@@ -122,7 +106,8 @@ function mensajeDeSalidaPagina() {
 }
 
 function buscarEnGrid() {
-    busqueda = $("#busquedaValue").val();    
+    busqueda = $("#busquedaValue").val();
+    estado = $("#estados").val();
     var datos = getDataSearch();    
     jQuery('#dataGrid').jqGrid('clearGridData');
     jQuery('#dataGrid').jqGrid('setGridParam', { data: datos });
@@ -131,7 +116,8 @@ function buscarEnGrid() {
 
 function getDataSearch() {
     var params = new Object();
-    params.Busqueda = busqueda;    
+    params.Busqueda = busqueda;
+    params.Estado = estado;
     var respuesta = "";
     $.ajax({
         type: "POST",

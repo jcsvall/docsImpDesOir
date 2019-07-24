@@ -8,8 +8,14 @@
 <div id="contenidoPagina" style="display:none">
 
     <div class="form-group row">
-        <div class="col-sm-10">
-            <input type="text" class="form-control form-control-sm" id="busquedaValue" placeholder="Busqueda por No. Orden, Tratamiento, Placa, Cliente, Fecha dd-MM-yyyy o dd/MM/yyyy" />
+        <div class="col-sm-3">
+            <select class="custom-select custom-select-sm" id="estados">
+                <option selected>[Estados]</option>
+
+            </select>
+        </div>
+        <div class="col-sm-7">
+            <input type="text" class="form-control form-control-sm" id="busquedaValue" placeholder="Fecha, N.Orden, Tipo Tratamiento, Placa,Vapor, Cliente" />
         </div>
         <button type="button" class="btn btn-primary btn-sm" id="buscar"><span class="oi oi-magnifying-glass" title="Buscar"></span>Buscar</button>
     </div>
