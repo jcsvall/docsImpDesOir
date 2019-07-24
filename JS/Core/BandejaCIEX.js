@@ -42,10 +42,6 @@ function cargarGrid() {
         datatype: "json",
         mtype: 'POST',
         postData: { Busqueda: busqueda, Estado: estado },
-        //postData: {
-        //    'Busqueda': function () { return $("#busquedaValue").val(); },
-        //    'Estado': function () { return $("#estados").val(); }
-        //},
         height: 'auto',
         width: '690',
         loadError: function (jqXHR, textStatus, errorThrown) {
@@ -57,8 +53,7 @@ function cargarGrid() {
         serializeGridData: function (postData) {
             return JSON.stringify(postData);
         },
-        ajaxGridOptions: { contentType: "application/json" },
-        //loadonce: true,
+        ajaxGridOptions: { contentType: "application/json" },       
         colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Estado', 'Fecha-Hora Pago','Id', 'Acci&oacute;n'],
         colModel: [            
             { name: 'Fecha', index: 'Fecha', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
@@ -72,18 +67,13 @@ function cargarGrid() {
             { name: 'id', index: 'id', width: 80,hidden:true },
             { name: 'act', index: 'act', width: 70, sortable: false, align: "center" },
         ],
-        rowNum: 2,
+        rowNum: 10,
         rowList: [10, 20, 30],
         pager: '#pagingGrid',
         sortname: 'Fecha',
         viewrecords: true,
         sortorder: "desc",
-        shrinkToFit: false,
-        //jsonReader: {            
-        //    page: "page",
-        //    total: "total",
-        //    records: "total",
-        //},
+        shrinkToFit: false,        
         gridComplete: function(){
             var ids = jQuery("#dataGrid").jqGrid('getDataIDs');
             for(var i=0;i < ids.length;i++){
@@ -96,7 +86,7 @@ function cargarGrid() {
             }	
         },
         caption: "Bandeja de ordenes CIEX"
-    });//.jqGrid("filterToolbar");
+    });
     jQuery("#dataGrid").jqGrid('navGrid', '#pagingGrid', { search: false, edit: false, add: false, del: false });
 }
 
@@ -122,31 +112,6 @@ function buscarEnGrid() {
     jQuery('#dataGrid').jqGrid('setGridParam', { postData: { Busqueda: busqueda, Estado: estado } });
     jQuery('#dataGrid').trigger('reloadGrid');
 }
-
-//function getDataSearch() {
-//    var params = new Object();
-//    params.Busqueda = busqueda;
-//    params.Estado = estado;
-//    var respuesta = "";
-//    $.ajax({
-//        type: "POST",
-//        contentType: "application/json; charset=utf-8",
-//        url: baseURL+"/GetBandejaData",
-//        data: JSON.stringify(params),
-//        dataType: "json",
-//        async: false,
-//        success: function (data, textStatus) {
-//            if (textStatus == "success") {                
-//                respuesta = data;
-//            }
-//        },
-//        error: function (request, status, error) {
-//            mensajeErrorDialog(jQuery.parseJSON(request.responseText).Message);
-//            //alert(jQuery.parseJSON(request.responseText).Message);
-//        }
-//    });
-//    return respuesta;
-//}
 
 function mensajeErrorDialog(mensajeDeError) {
     var sessionExpirada = "Session de usuario expirada";
