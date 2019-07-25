@@ -626,6 +626,184 @@ public class Utilidades
             throw new Exception("No se actualizo el estado de la orden MAG Puesto: " + Servicio.Enca.Puesto +" No. Orden: " + Servicio.Enca.Norden);
         }
     }
+
+    public string GenerarCertificado(int IdPagoOrdenCIEX)
+    {
+        Funciones fn = new Funciones();
+        String Response = "Testing";
+        String QueryEncabezado = "SELECT id,Puesto,NCertificado,Fecha,Cambio,Cortesia,Local_,Total,TotalString,Observacion,Responsable,Anulado,Remesado,Replicado,NEnd,TipoCertificado,TipoCliente,ClienteExtra,Cliente,Vapor,NAduana,Placa,Impuesto,IDCCaja,ADelDia,EnviaPlat,FechaTrat,FechaTrat_Fin,Credito,NOrden,FOrden,fPagoCiex,Estado,AOrden,Cuarentena,IDFactura,NViaje,FechaAtraque,idPais,Ingles,Operador,CompFiscal,NoCompFiscal,PlacaDos,NumeroBL,MigradoGP,NOrdenCiex,NCompranteCiex FROM tblOrdenPagoCiex where id = " + IdPagoOrdenCIEX;
+        String QueryDetalle = "SELECT id,idOrdenCiex,Puesto,NCertificado,Servicio,Cantidad,US,Local,SubTotal,Plaguicida,Dosis,UD,Plaguicida2,Dosis2,UD2,Real,Producto,Ruta,TipoAvion,Procedencia,Destino,NVuelo,TiempoExposicion,UT,Razon,NActa,DB,Session,CantVol,UC,EnviaPlat,CantidadCubicada,Teorico,Densidad,Contenedor,Silo,LugTrat,Concentracion,Temperatura,TiempoAereacion,UT_Aereacion,Origen,idPais,MatriculaAvion,Descripcion FROM tblOrdenPagoCiexDetalle WHERE idOrdenCiex = " + IdPagoOrdenCIEX;
+        SqlConnection Conn = fn.ConnectionSql();
+        SITC.Certificado.CertificadosTransaction tr = new SITC.Certificado.CertificadosTransaction();
+        SITC.Certificado.tblcertif Encabezado = new SITC.Certificado.tblcertif();
+        String ncertificado = "";
+        try
+        {
+            
+            SqlCommand cmSQL = new SqlCommand(QueryEncabezado, Conn);
+            SqlDataReader reader = cmSQL.ExecuteReader();
+            while (reader.Read())
+            {
+                String idPais = reader["idPais"].ToString();
+                String idPuesto = reader["Puesto"].ToString();
+                ncertificado = (fn.Recuperar_CorrelativoC(idPais, idPuesto, "NCertificado"));
+              
+                if (ncertificado == "0")
+                {
+                    throw new Exception("Correlativo no definido! Informar al Depto. de Informatica de OIRSA Sede");
+                }
+
+                Encabezado.Ncertificado = ncertificado;
+                Encabezado.Puesto = idPuesto;
+                Encabezado.idpais = idPais;
+                if (!"".Equals(reader["Fecha"].ToString()))
+                {
+                    Encabezado.Fecha = Convert.ToDateTime(reader["Fecha"].ToString());
+                }
+                Encabezado.Responsable = reader["Responsable"].ToString();
+                Encabezado.Cambio= Convert.ToDecimal(reader["Cambio"].ToString());
+                Encabezado.Cortesia = Convert.ToBoolean(reader["Cortesia"].ToString());
+                Encabezado.Local = Convert.ToBoolean(reader["Local_"].ToString());
+                Encabezado.Total = Convert.ToDecimal(reader["Total"].ToString());
+                Encabezado.Totalstring = reader["TotalString"].ToString();
+                Encabezado.Observacion = reader["Observacion"].ToString();
+                Encabezado.Anulado = Convert.ToBoolean(reader["Anulado"].ToString());
+                Encabezado.Remesado = Convert.ToBoolean(reader["Remesado"].ToString());
+                Encabezado.Replicado = Convert.ToBoolean(reader["Replicado"].ToString());
+                Encabezado.Nend = Convert.ToBoolean(reader["NEnd"].ToString());
+                Encabezado.Tipocertificado = reader["TipoCertificado"].ToString();
+                Encabezado.Tipocliente = reader["TipoCliente"].ToString();
+                Encabezado.Clienteextra = reader["ClienteExtra"].ToString();
+                Encabezado.Cliente = reader["Cliente"].ToString();
+                Encabezado.Vapor = reader["Vapor"].ToString();               
+                Encabezado.Naduana = reader["NAduana"].ToString();
+                Encabezado.Placa = reader["Placa"].ToString();
+                Encabezado.Impuesto = Convert.ToDecimal(reader["Impuesto"].ToString());
+                if (!"".Equals(reader["IDCCaja"].ToString()))
+                {
+                    Encabezado.Idccaja = Convert.ToInt32(reader["IDCCaja"].ToString());
+                }
+                Encabezado.Adeldia = Convert.ToBoolean(reader["ADelDia"].ToString());
+                Encabezado.Enviaplat = Convert.ToBoolean(reader["EnviaPlat"].ToString());
+                if (!"".Equals(reader["FechaTrat"].ToString()))
+                {
+                    Encabezado.Fechatrat = Convert.ToDateTime(reader["FechaTrat"].ToString());
+                }
+                if (!"".Equals(reader["FechaTrat_Fin"].ToString()))
+                {
+                    Encabezado.FechatratFin = Convert.ToDateTime(reader["FechaTrat_Fin"].ToString());
+                }             
+                Encabezado.Credito = Convert.ToBoolean(reader["Credito"].ToString());
+                Encabezado.Norden = reader["NOrden"].ToString();
+                if (!"".Equals(reader["FOrden"].ToString()))
+                {
+                    Encabezado.Forden = Convert.ToDateTime(reader["FOrden"].ToString());
+                }
+                Encabezado.Aorden = reader["AOrden"].ToString();
+                Encabezado.Cuarentena = reader["Cuarentena"].ToString();
+                //
+                Encabezado.Idfactura = reader["IDFactura"].ToString();
+                Encabezado.Nviaje = reader["NViaje"].ToString();
+                if (!"".Equals(reader["FechaAtraque"].ToString()))
+                {
+                    Encabezado.Fechaatraque = Convert.ToDateTime(reader["FechaAtraque"].ToString());
+                }
+                Encabezado.Ingles = Convert.ToBoolean(reader["Ingles"].ToString());
+                Encabezado.PlacaDos = reader["PlacaDos"].ToString();
+                Encabezado.NumeroBL = reader["NumeroBL"].ToString();
+
+                //id,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,fPagoCiex,Estado,,,,,,,,Operador,CompFiscal,NoCompFiscal,,,MigradoGP,NOrdenCiex,NCompranteCiex FROM tblOrdenPagoCiex
+                tr.Encabezado = Encabezado;
+            }
+
+            SqlCommand cmDetSQL = new SqlCommand(QueryDetalle, Conn);            
+            SqlDataAdapter da = new SqlDataAdapter(cmDetSQL);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+
+            //se crea vector con la cantidad de registros a guardar.
+            int CantidadRegistros = dt.Rows.Count;            
+            SITC.Certificado.tblcertifdet[] dets= new SITC.Certificado.tblcertifdet[CantidadRegistros];
+
+            int Index = 0;
+            foreach (DataRow row in dt.Rows)
+            {
+                SITC.Certificado.tblcertifdet Det = new SITC.Certificado.tblcertifdet();
+                //Det.Contenedor = "Contenedor de Prueb c#";
+                
+                Det.Puesto= row["Puesto"].ToString();
+                Det.Ncertificado = ncertificado;
+                Det.Servicio = row["Servicio"].ToString();
+                Det.Cantidad = (float) Convert.ToDouble(row["Cantidad"].ToString());
+                Det.Us = Convert.ToDecimal(row["US"].ToString());
+                Det.Local = Convert.ToDecimal(row["Local"].ToString());
+                Det.Subtotal = Convert.ToDecimal(row["SubTotal"].ToString());
+                Det.Plaguicida = row["Plaguicida"].ToString();
+                Det.Dosis = Convert.ToDecimal(row["Dosis"].ToString());
+                Det.Ud = row["UD"].ToString();
+                Det.Plaguicida2 = row["Plaguicida2"].ToString();
+                if (!"".Equals(row["Dosis2"].ToString()))
+                {
+                    Det.Dosis2 = Convert.ToDecimal(row["Dosis2"].ToString());
+                }
+                Det.Ud2 = row["UD2"].ToString();
+                Det.Real = Convert.ToDecimal(row["Real"].ToString());
+                Det.Producto = Convert.ToInt32(row["Producto"].ToString());
+                Det.Ruta = row["Ruta"].ToString();
+                Det.Tipoavion = row["TipoAvion"].ToString();
+                Det.Procedencia = row["Procedencia"].ToString();
+                Det.Destino = row["Destino"].ToString();
+                Det.Nvuelo = row["NVuelo"].ToString();
+                Det.Tiempoexposicion = Convert.ToDecimal(row["TiempoExposicion"].ToString());
+                Det.Ut = row["UT"].ToString();
+                Det.Razon = row["Razon"].ToString();
+                Det.Nacta = row["NActa"].ToString();
+                Det.Db = Convert.ToBoolean(row["DB"].ToString());
+                Det.Session = row["Session"].ToString();
+                Det.Cantvol = Convert.ToDecimal(row["CantVol"].ToString());
+                Det.Uc = row["UC"].ToString();
+                Det.Enviaplat = Convert.ToBoolean(row["EnviaPlat"].ToString());
+                Det.Cantidadcubicada = Convert.ToDecimal(row["CantidadCubicada"].ToString());
+                Det.Teorico = Convert.ToDecimal(row["Teorico"].ToString());
+                Det.Densidad = row["Densidad"].ToString();
+                Det.Contenedor = row["Contenedor"].ToString();
+                Det.Silo = row["Silo"].ToString();
+                Det.Lugtrat = row["LugTrat"].ToString();
+                //
+                Det.Concentracion = row["Concentracion"].ToString();
+                Det.Temperatura = (float)Convert.ToDouble(row["Temperatura"].ToString());
+                Det.Tiempoaereacion = Convert.ToDecimal(row["TiempoAereacion"].ToString());
+                Det.UtAereacion = row["UT_Aereacion"].ToString();
+                Det.Origen = row["Origen"].ToString();
+                Det.idpais = row["idPais"].ToString();
+                Det.MatriculaAvion = row["MatriculaAvion"].ToString();
+                //id,idOrdenCiex,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Descripcion
+
+                dets[Index] = Det;
+                Index++;
+            }
+            
+            tr.Detalle = dets;
+
+            tr.Guardar();
+
+        }
+        catch (SqlException sqlex)
+        {
+            
+            throw new Exception("Error: " + sqlex, sqlex);
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error: " + e, e);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+
+        return Response;
+    }
     
 }
 

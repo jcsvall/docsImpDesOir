@@ -97,6 +97,13 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
         return sQuery;
     }
 
+    [WebMethod()]
+    public static string GenerarCertificado(int IdPagoOrdenCIEX)
+    {
+        Utilidades Util = new Utilidades();
+        return Util.GenerarCertificado(IdPagoOrdenCIEX);
+    }
+
     public static List<String> FechaValida(string inputDate)
     {
         List<String> response = new List<String>();

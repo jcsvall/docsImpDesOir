@@ -84,7 +84,7 @@ function cargarGrid() {
                 if (rowSelected.Estado.trim().toUpperCase() == 'PAGADO') {
                     //be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
                     //jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
-                    be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
+                    be = "<button type='button' class='btn btn-primary btn-sm' onClick='confirmDialog(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
                 }else{
                     be = "<button type='button' class='btn btn-primary btn-sm' disabled><span class='oi oi-file' style='font-size:90%' title='No valido para esta opci&oacute;n'></span></button> ";
                 }
@@ -99,7 +99,27 @@ function cargarGrid() {
 
 function generarCertificado(objeto) {    
     var NOrden = objeto.NOrdenCiex;
-    alert(NOrden + " Id: " + objeto.id + " Valor: " + objeto.Total);
+    //alert(NOrden + " Id: " + objeto.id + " Valor: " + objeto.Total);
+    var params = new Object();
+    params.IdPagoOrdenCIEX = objeto.id;
+    //var respuesta = "";
+    $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: baseURL + "/GenerarCertificado",
+        data: JSON.stringify(params),
+        dataType: "json",
+        async: false,
+        success: function (data, textStatus) {
+            if (textStatus == "success") {
+                alert(data);
+                alertify.success('Certificado generado correctamente');
+            }
+        },
+        error: function (request, status, error) {
+            mensajeErrorDialog(jQuery.parseJSON(request.responseText).Message);            
+        }
+    });
 }
 
 function replaceAll(str, find, replace) {
@@ -139,4 +159,15 @@ function mensajeErrorDialog(mensajeDeError) {
               'onok': function () { }
           }).show().setHeader('<em> Ocurrio un error </em> ');
     }
+}
+
+function confirmDialog(objeto) {
+    alertify.confirm('Confirmaci&oacute;n', '<div style="font-weight:bold">Se generar&aacute; certificado de tipo ' + objeto.TipoCertificado + '</div><div style="color:red;font-weight:bold">¿Desea continuar?</div>',
+        function () {
+            generarCertificado(objeto);
+            //alertify.success('Ok');
+        },
+        function () {
+           // alertify.error('Cancel')
+        }).set('labels', { ok: 'Aceptar', cancel: 'Cancelar' });
 }
