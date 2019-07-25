@@ -785,7 +785,10 @@ public class Utilidades
             
             tr.Detalle = dets;
 
-            tr.Guardar();
+            String UpdateEncabezado = "UPDATE tblOrdenPagoCiex SET NCertificado='"+ ncertificado + "',Estado='PROCESADO' WHERE ID = " + IdPagoOrdenCIEX;
+            String UpdateDetalle = "UPDATE tblOrdenPagoCiexDetalle SET NCertificado='"+ ncertificado +"' WHERE idOrdenCiex = " + IdPagoOrdenCIEX;
+
+            tr.GuardarCIEX(UpdateEncabezado, UpdateDetalle);
 
         }
         catch (SqlException sqlex)
