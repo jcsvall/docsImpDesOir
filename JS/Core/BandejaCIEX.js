@@ -1,9 +1,11 @@
 ﻿var busqueda = "";
 var estado = "";
 var baseURL = "Bandeja_CIEX.aspx";
+var tiempoRecarga = 0.5;//cada medio minuto.
 $(document).ready(function () {
     init();
     cargarGrid();
+    recargar(tiempoRecarga);
 });
 
 function init() {
@@ -82,15 +84,15 @@ function cargarGrid() {
                 var cl = ids[i];                                
                 var rowSelected = jQuery("#dataGrid").jqGrid('getRowData', cl);                
                 if (rowSelected.Estado.trim().toUpperCase() == 'PAGADO') {
-                    //be = "<button type='button' class='btn btn-primary btn-sm' onClick='generarCertificado(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
-                    //jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
+                    //jQuery("#dataGrid").jqGrid('setCell', cl, "Estado", "", { color: 'red', 'background-color': 'yellow' });
+                    jQuery("#dataGrid").jqGrid('setCell', cl, "Estado", "", { color: 'red' });
                     be = "<button type='button' class='btn btn-primary btn-sm' onClick='confirmDialog(" + JSON.stringify(rowSelected) + ")'><span class='oi oi-file' style='font-size:90%' title='Generar Certificado'></span></button> ";
                 }else{
                     be = "<button type='button' class='btn btn-primary btn-sm' disabled><span class='oi oi-file' style='font-size:90%' title='No valido para esta opci&oacute;n'></span></button> ";
                 }
                 jQuery("#dataGrid").jqGrid('setRowData', ids[i], { act: be });
             }	
-        },
+        },        
         caption: "Bandeja de ordenes CIEX"
     });
     jQuery("#dataGrid").jqGrid('navGrid', '#pagingGrid', { search: false, edit: false, add: false, del: false });
@@ -134,9 +136,16 @@ function buscarEnGrid() {
     busqueda = $("#busquedaValue").val();
     estado = $("#estados").val();
 
-    jQuery('#dataGrid').jqGrid('clearGridData');
+    //jQuery('#dataGrid').jqGrid('clearGridData');
     jQuery('#dataGrid').jqGrid('setGridParam', { postData: { Busqueda: busqueda, Estado: estado } });
     jQuery('#dataGrid').trigger('reloadGrid');
+}
+
+function recargar(minutos) {
+    var tiempoMinuto = (60000)*minutos;
+    setInterval(function () {
+        buscarEnGrid();
+    }, tiempoMinuto);
 }
 
 function mensajeErrorDialog(mensajeDeError) {
