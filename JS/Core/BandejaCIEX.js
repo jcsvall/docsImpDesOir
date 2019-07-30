@@ -56,7 +56,7 @@ function cargarGrid() {
             return JSON.stringify(postData);
         },
         ajaxGridOptions: { contentType: "application/json" },       
-        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Valor','Estado', 'Fecha-Hora Pago','Comprobante','Id', 'Acci&oacute;n'],
+        colNames: ['Fecha', 'No. Orden', 'Tipo Tratamiento', 'Cliente', 'Responsable MAG', 'Placa/Vapor', 'Valor','Estado', 'Fecha-Hora Pago','Comprobante','No. Certificado','Id', 'Acci&oacute;n'],
         colModel: [            
             { name: 'Fecha', index: 'Fecha', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
             { name: 'NOrdenCiex', index: 'NOrdenCiex', width: 120 },
@@ -68,6 +68,7 @@ function cargarGrid() {
             { name: 'Estado', index: 'Estado', width: 90, align: "center" },
             { name: 'fechaHoraPago', index: 'fechaHoraPago', width: 130, sorttype: "date", formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d/m/Y h:i A" } },
             { name: 'NCompranteCiex', index: 'NCompranteCiex', width: 90, align: "center" },
+            { name: 'NCertificado', index: 'NCertificado', width: 110, align: "center" },
             { name: 'id', index: 'id', width: 80, hidden: true },
             { name: 'act', index: 'act', width: 70, sortable: false, align: "center" },
         ],

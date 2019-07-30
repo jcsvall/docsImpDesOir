@@ -85,7 +85,7 @@ public partial class Bandeja_CIEX : System.Web.UI.Page
 
         if (tipo.Equals("select"))
         {
-            sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,LTRIM(tOr.Placa)+' '+LTRIM(tOr.Vapor) PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago,tOr.Total,tOr.NCompranteCiex,tOr.id ";
+            sQuery = " SELECT tOr.Fecha,NOrdenCiex,TipoCertificado,Nombre cliente,InspectorMAG responsableMag,LTRIM(tOr.Placa)+' '+LTRIM(tOr.Vapor) PlacaVapor,tOr.Estado,fPagoCiex fechaHoraPago,tOr.Total,tOr.NCompranteCiex,tOr.id,tOr.NCertificado ";
         }
         if (tipo.Equals("count")) {
             sQuery = " SELECT COUNT(tOr.id) totalRegistros ";
