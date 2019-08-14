@@ -32,4 +32,6 @@ git remote add origin https://github.com/jcsvall/docsImpDesOir.git
 git pull
 git push -u origin master
 
+creacion de rama desde un commit: git branch 'nombreRama' 'hash-commit', al hacer push se creara en el remoto.
+
 vido7
