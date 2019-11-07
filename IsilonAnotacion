@@ -1,3 +1,10 @@
 NAS->para data no estructurada
 Isilon-->generacion 6, chasis de nodos, se agregan nodos, cada nodo  tiene sus discos su ram y procesamiento, se suman a los closter, todos juntos forman el filesystem 
 2 cluster primario y segundario:dos filesystem
+un cluster se compone con 4 nodos para una generacion 6, los discos deben ser excatamente igual en cada uno de los nodos,
+
+un chasis esta compuesto por 4 nodos
+
+cada nodo debe tener una o varias IP.
+
+ip smartconnect dns crear una delegacion esta ip revolvera este nombre
