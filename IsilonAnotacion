@@ -1,0 +1,3 @@
+NAS->para data no estructurada
+Isilon-->generacion 6, chasis de nodos, se agregan nodos, cada nodo  tiene sus discos su ram y procesamiento, se suman a los closter, todos juntos forman el filesystem 
+2 cluster primario y segundario:dos filesystem
