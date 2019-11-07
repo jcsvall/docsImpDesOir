@@ -8,3 +8,12 @@ un chasis esta compuesto por 4 nodos
 cada nodo debe tener una o varias IP.
 
 ip smartconnect dns crear una delegacion esta ip revolvera este nombre
+
+SyncIQ: permite visualizar el performance del cluster
+SmartPools:permite agregar nodos de diferentes tecnologias.
+SmartLock:permite bloquear una carpeta
+HDFS: filesystem se utiliza para transeferencia de datos
+SmartDedupe:para que no haya data duplicada
+CloudPools:para integrar pool de la nuve
+Isilon Swift: para transferir data
+Security hardening	:permite incorporar, dar accceso a la consola
