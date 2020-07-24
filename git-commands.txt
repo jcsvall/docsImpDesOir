@@ -15,8 +15,14 @@ git config --global user.email "jcsvall@hotmail.com"
 [git commit -m "mensaje"]->para hacer comit de todo el stage.
 [git diff]->para ver las diferencias de los archivos que han sido modificados
 [git checkout .]-> para deshacer todos los cambios realizados
+
 [git log]-> para ver el historia de commits.
 [git log -p -2]-> -p muestra las diferencias introducidas en cada confirmación,-2 solo mostrar 2 commits
+[git log --stat]-> Esta opción muestra la misma información, pero añadiendo tras cada entrada las diferencias que le corresponden
+[git log --since=2.weeks]->lista todas las confirmaciones hechas durante las dos últimas semanas
+[git shortlog] Para saber los números de commits y que mensajes se añadieron en los commits por cada usuario.
+[git log --author="usuario-git" --pretty=oneline] Para conocer el listado de commits hechos por un usuario en particular  ejemplo: git log --author="jserranovalle@gmail.com" --pretty=oneline
+
 [git reset directorio/*.css]-> remover del stage todo lo que contenga el directorio con exgtencion css
 
 [git config --global alias.l "log"]->Agregar alias a comandos
