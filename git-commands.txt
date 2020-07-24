@@ -16,6 +16,7 @@ git config --global user.email "jcsvall@hotmail.com"
 [git diff]->para ver las diferencias de los archivos que han sido modificados
 [git checkout .]-> para deshacer todos los cambios realizados
 [git log]-> para ver el historia de commits.
+[git log -p -2]-> -p muestra las diferencias introducidas en cada confirmación,-2 solo mostrar 2 commits
 [git reset directorio/*.css]-> remover del stage todo lo que contenga el directorio con exgtencion css
 
 [git config --global alias.l "log"]->Agregar alias a comandos
